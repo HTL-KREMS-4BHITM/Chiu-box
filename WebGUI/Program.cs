@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Model.Configurations;
 using WebGUI.Components;
 using WebGUI.Components.Account;
 using WebGUI.Data;
@@ -35,6 +36,20 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+
+
+
+//
+builder.Services.AddDbContextFactory<DishContext>(
+    options => options.UseMySql(
+        builder.Configuration
+            .GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 27))
+    )
+);
+
+
 
 var app = builder.Build();
 
