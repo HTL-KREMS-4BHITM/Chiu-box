@@ -10,4 +10,11 @@ public class Dish
     public int DishId { get; set; }
     [Column("NAME"), MaxLength(255)]
     public string Name { get; set; }
+    [Column("PRICE")] 
+    public decimal Price { get; set; }
+    [Column("DESCRIPTION"), MaxLength(255)]
+    public string Description { get; set; }
+
+    public ESupplementType Type { get; set; }
 }
+
