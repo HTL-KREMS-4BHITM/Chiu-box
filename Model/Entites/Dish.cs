@@ -10,4 +10,5 @@ public class Dish
     public int DishId { get; set; }
     [Column("NAME"), MaxLength(255)]
     public string Name { get; set; }
+    public int idk { get; set; }
 }
