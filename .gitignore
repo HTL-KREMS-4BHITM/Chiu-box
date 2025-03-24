@@ -6,3 +6,4 @@ app.css
 app.css.map
 appsettings.json
 node_modules/
+Migrations/
