@@ -44,7 +44,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddDbContextFactory<DishContext>(
     options => options.UseMySql(
         builder.Configuration
-            .GetConnectionString("DefaultConnection"),
+            .GetConnectionString("AdditionalConnection"),
         new MySqlServerVersion(new Version(8, 0, 27))
     )
 );
