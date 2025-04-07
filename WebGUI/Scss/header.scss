@@ -1,3 +1,38 @@
 ﻿//if we want to use defined variables and colors we need to include them here with a '@use'
-@use "variables";
-@use "colors";
+@use "variables" as *;
+@use "colors" as *;
+.section-header{
+  .navbar{
+    background-color: $primary;
+  }
+
+  .navbar-brand{
+    * {
+      
+      line-height: 1.2;
+      font:{
+        family: "Railway";
+        weight: 400;
+        style: normal;
+        size: 1.5rem;
+      }
+    }
+    
+  }
+
+  .nav-link {
+    color: $textWhite;
+    font-size: 1.2rem;
+    margin: 0 20px;
+    font:{
+      family: "Railway";
+      weight: 400;
+      style: normal;
+    }
+  }
+
+  .nav-item:last-child .nav-link svg {
+    width: 35px;
+    height: 35px;
+  }
+}
