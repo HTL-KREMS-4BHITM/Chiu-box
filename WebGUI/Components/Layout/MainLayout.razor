@@ -1,20 +1,19 @@
 ﻿@inherits LayoutComponentBase
-@using Pages
-<div class="page m-0">
-<main>
-    <div>
-        <Header></Header>
-        <AuthorizeView>
-            <NotAuthorized>
-            </NotAuthorized>
-            <Authorized>
-            </Authorized>
-        </AuthorizeView>
-        @Body
-        <Footer></Footer>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
     </div>
 
-</main>
+    <main>
+        <div class="top-row px-4">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
 </div>
 
 <div id="blazor-error-ui">
@@ -22,4 +21,3 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
-
