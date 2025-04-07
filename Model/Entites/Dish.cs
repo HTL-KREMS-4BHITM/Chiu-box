@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Entites;
 
@@ -18,15 +19,13 @@ public class Dish
     [Column("DESCRIPTION"), MaxLength(255)]
     public string? Description { get; set; }
     
-    [Column("ALLERGENS"), MaxLength(25)]
-    public string? Allergens { get; set; }
+    [Column("CODE"), MaxLength(7), Required]
+    public string? Code { get; set; }
     
-    [Column("CODES"), MaxLength(7), Required]
-    public string? Codes { get; set; }
-    
-    [Column("ISINSTOCK")]
+    [Column("IS_IN_STOCK")]
     public bool IsInStock { get; set; }
     
+    [Column ("SUPPLEMENTTYPE"), MaxLength(10)]
     public ESupplementType Type { get; set; }
 }
 
