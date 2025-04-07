@@ -1,12 +1,23 @@
 ﻿@use "colors.scss" as *;
-.bi-info-circle-fill{
-  color:$secondary;
-}
-.addBtn{
-  background:$primary;
-  color:$textWhite;
-}
-.addBtn:hover{
-  background:$secondary;
-  color:$textWhite;
+.dish{
+  padding: 6px;
+  h3{
+    font: {
+      size: 20px;
+    }
+  }
+  .bi-info-circle-fill{
+    color:$secondary;
+  }
+  .addBtn{
+    background:$primary;
+    color:$textWhite;
+  }
+  .addBtn:hover{
+    background:$secondary;
+    color:$textWhite;
+  }
+  .price{
+    color:$secondary;
+  }
 }
