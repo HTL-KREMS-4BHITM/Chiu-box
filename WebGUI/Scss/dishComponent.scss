@@ -1,0 +1,12 @@
+﻿@use "colors.scss" as *;
+.bi-info-circle-fill{
+  color:$secondary;
+}
+.addBtn{
+  background:$primary;
+  color:$textWhite;
+}
+.addBtn:hover{
+  background:$secondary;
+  color:$textWhite;
+}

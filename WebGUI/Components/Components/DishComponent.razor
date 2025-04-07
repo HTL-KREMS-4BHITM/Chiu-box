@@ -1,0 +1,41 @@
+﻿@using Model.Entites
+<div class="card">
+  
+    <div class="row">
+        <div class="col-9">
+            <div class="row">
+                <div class="col-12">
+                    @Dish.Name
+                    @Dish.Codes
+                </div>
+                <div class="col-12">
+                    @Dish.Description
+                </div>
+                <div class="col-12">
+                    @Dish.Price
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="row">
+                <div class="col-12">
+                    <button class="addBtn btn">
+                        +
+                    </button>
+                </div>
+                <div class="col-12">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+
+</div>
+
+@code {
+    [Parameter] public Dish Dish { get; set; }
+}

@@ -1,0 +1,51 @@
+﻿@page "/mainDishesView"
+@using Model.Entites
+@using WebGUI.Components.Components
+<h3>MainDishesView</h3>
+
+<div>
+    navbar
+</div>
+<h1>
+    Hauptspeisen
+</h1>
+<p>ew/svf/rg/iu/tz/gc</p>
+
+
+
+<div class="row">
+    
+    @foreach (var dish in dishes)
+    {
+        <div class="col-3">
+            <DishComponent  Dish="dish"></DishComponent>
+        </div>
+    }
+</div>
+
+
+
+
+
+
+
+
+<div>
+    impresum 
+</div>
+
+
+
+
+
+
+@code {
+
+    List<Dish> dishes = new()
+    {
+        new Dish() { Name = "Achtschätze", DishId = 1, Description = "loremwenfjrnfnwsjoiffnvs"},
+        new Dish() { Name = "hun mit erbsen", DishId = 2, Description = "werfcsdcsdwdccvcrvfrfsfdfer"}
+    };
+
+    }
+
