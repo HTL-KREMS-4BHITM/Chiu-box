@@ -4,12 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
 
 namespace Domain.Repositories.Implementations;
-
 public abstract class ARepositoryAsync<TEntity> : IRepositoryAsync<TEntity> where TEntity : class
+
 {
     protected DishContext Context { get; }
     protected DbSet<TEntity> Table { get; }
-
     public ARepositoryAsync(DishContext context)
     {
         Context = context;

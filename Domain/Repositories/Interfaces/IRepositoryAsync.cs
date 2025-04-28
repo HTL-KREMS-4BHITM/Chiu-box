@@ -2,8 +2,8 @@
 
 namespace Domain.Repositories.Interfaces;
 
-
-public interface IRepositoryAsync<TEntity> where TEntity : class {
+public interface IRepositoryAsync<TEntity> where TEntity: class
+{
     Task<TEntity> CreateAsync(TEntity t);
     Task<List<TEntity>> CreateRangeAsync(List<TEntity> list);
     Task UpdateAsync(TEntity t);
@@ -15,4 +15,3 @@ public interface IRepositoryAsync<TEntity> where TEntity : class {
     Task DeleteAsync(TEntity t);
     Task DeleteAsync(int id);
 }
-

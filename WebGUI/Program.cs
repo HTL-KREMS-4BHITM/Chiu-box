@@ -52,6 +52,7 @@ builder.Services.AddDbContextFactory<DishContext>(
     )
 );
 
+builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
 
 
 

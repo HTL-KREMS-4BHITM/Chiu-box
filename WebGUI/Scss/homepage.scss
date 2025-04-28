@@ -1,0 +1,18 @@
+﻿@use "colors" as *;
+
+body{
+  background-color: $background;
+  .home_image{
+    height:15rem;
+    
+  }
+}
+
+.section{
+  background-color: $secondary;
+  img{
+    width:10rem;
+    
+  }
+  
+}
