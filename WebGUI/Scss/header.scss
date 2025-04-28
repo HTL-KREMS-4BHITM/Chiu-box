@@ -37,5 +37,11 @@
   }
   .cart {
     background-color: $header_basket_bg;
+    
+    border-radius: 12px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
   }
 }
