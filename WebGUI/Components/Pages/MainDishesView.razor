@@ -15,15 +15,17 @@
 <p>ew/svf/rg/iu/tz/gc</p>
 
 
-
-<div class="row">
-    
-    @foreach (var dish in dishes)
-    {
-        <div class="col-3">
-            <DishComponent  Dish="dish"></DishComponent>
-        </div>
-    }
+<div class="container container-lg">
+        
+    <div class="row g-4">
+        
+        @foreach (var dish in dishes)
+        {
+            <div class="col-3">
+                <DishComponent  Dish="dish"></DishComponent>
+            </div>
+        }
+    </div>
 </div>
 
 
