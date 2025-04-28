@@ -1,4 +1,5 @@
-﻿//here we define all our variables
+﻿
+//here we define all our variables
 p{
   font: {
     family: Inter;
@@ -8,23 +9,30 @@ p{
   //vertical-align: center;
   line-height: 28px;
 }
-h1{
+h1 {
   font: {
     family: Raleway;
-  } 
-}
-h2{
-  font: {
-    family: Raleway;
+    size: 28px;
+    weight: 600;
   }
+  line-height: 40px;
 }
-h3{
+
+h2 {
   font: {
-    family: Raleway;
+    family: Inter;
+    size: 20px;
+    weight: 700;
   }
+  line-height: 32px;
 }
-h4{font: {
-  family: Raleway;
-} 
+
+h3 {
+  font: {
+    family: Inter;
+    size: 16px;
+    weight: 700;
+  }
+  line-height: 28px;
 }
 
