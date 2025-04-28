@@ -1,7 +1,7 @@
 ﻿//here we define all our variables
 p{
   font: {
-    family: Inter;
+    family: Raleway;
     size: 16px;
     weight: 400;
   }
@@ -11,20 +11,35 @@ p{
 h1{
   font: {
     family: Raleway;
-  } 
+  }
+  line-height: 40px;
+
 }
 h2{
   font: {
     family: Raleway;
   }
+  line-height: 32px;
 }
 h3{
   font: {
     family: Raleway;
+
   }
+  line-height: 28px;
 }
 h4{font: {
   family: Raleway;
-} 
+}
+}
+h5{
+  font:{
+    family: Raleway;
+  }
+}
+h6{
+  font:{
+    family: Raleway;
+  }
 }
 
