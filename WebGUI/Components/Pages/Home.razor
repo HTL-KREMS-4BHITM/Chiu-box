@@ -6,39 +6,37 @@
 <PageTitle>Home</PageTitle>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12 flex-row section">
-            <div class="col-6">
-                <h3>Standort</h3>
-                <p>loremlkjasöldfjk aölsdjfölasjdföl jaösldfjölaksd jflkasjdflö asjdölf jsdlökfj aslkdfjlsakdf jlökas jdflöka sjdlfkjasdlkf jaslkdfj öalsjfdlas jdf</p>
-            </div>
-            <div class="col-6 section_img">
-                <img src="Resources/1 (2).jpg"/>
-            </div>
+    <div class="row mb-5 me-0 p-0">
+        <div class="col-6 ms-5 mt-5">
+            <h3>Standort</h3>
+            <p>
+                loremlkjasöldfjk aölsdjfölasjdföl jaösldfjölaksd jflkasjdflö asjdölf jsdlökfj aslkdfjlsakdf 
+                jlökas jdflöka sjdlfkjasdlkf jaslkdfj öalsjfdlas jdf
+            </p>
+        </div>
+        <div class="col-5 pe-5 mt-5 d-flex justify-content-center">
+            <img src="Resources/1 (2).jpg" alt="standort" class="home_image"/>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 flex-row section">
-            <div class="col-6">
-                <h3>Gerichte</h3>
-                <p>loremlkjasöldfjk aölsdjfölasjdföl jaösldfjölaksd jflkasjdflö asjdölf jsdlökfj aslkdfjlsakdf jlökas jdflöka sjdlfkjasdlkf jaslkdfj öalsjfdlas jdf</p>
-            </div>
-            <div class="col-6 section_img">
-                <img src="Resources/1 (2).jpg"/>
-            </div>
+
+    <div class="row section">
+        <div class="col-6 ms-5 mt-5">
+            <h3>Gerichte</h3>
+            <p>
+                loremlkjasöldfjk aölsdjfölasjdföl jaösldfjölaksd jflkasjdflö asjdölf jsdlökfj aslkdfjlsakdf 
+                jlökas jdflöka sjdlfkjasdlkf jaslkdfj öalsjfdlas jdf
+            </p>
+        </div>
+        <div class="col-5 me-5 mt-5 d-flex justify-content-center">
+            <img src="Resources/1 (2).jpg" alt="gerichte" class="home_image"/>
         </div>
     </div>
-</div>
-<div>
-    
 </div>
 
-@code{
-    private List<Dish> dishes = new ();
+@code {
+    private List<Dish> dishes = new();
     protected override async Task OnInitializedAsync()
     {
         dishes = await DishRepository.ReadAllAsync();
     }
-
-
 }
