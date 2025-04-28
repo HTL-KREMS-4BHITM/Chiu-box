@@ -1,7 +1,10 @@
+using Domain.Repositories.Implementations;
+using Domain.Repositories.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
+using Model.Entites;
 using WebGUI.Components;
 using WebGUI.Components.Account;
 using WebGUI.Data;
@@ -49,6 +52,7 @@ builder.Services.AddDbContextFactory<DishContext>(
     )
 );
 
+builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
 
 
 var app = builder.Build();

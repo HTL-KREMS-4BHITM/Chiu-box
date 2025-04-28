@@ -1,7 +1,44 @@
 ﻿@page "/"
+@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<Dish> DishRepository 
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 flex-row section">
+            <div class="col-6">
+                <h3>Standort</h3>
+                <p>loremlkjasöldfjk aölsdjfölasjdföl jaösldfjölaksd jflkasjdflö asjdölf jsdlökfj aslkdfjlsakdf jlökas jdflöka sjdlfkjasdlkf jaslkdfj öalsjfdlas jdf</p>
+            </div>
+            <div class="col-6 section_img">
+                <img src="Resources/1 (2).jpg"/>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 flex-row section">
+            <div class="col-6">
+                <h3>Gerichte</h3>
+                <p>loremlkjasöldfjk aölsdjfölasjdföl jaösldfjölaksd jflkasjdflö asjdölf jsdlökfj aslkdfjlsakdf jlökas jdflöka sjdlfkjasdlkf jaslkdfj öalsjfdlas jdf</p>
+            </div>
+            <div class="col-6 section_img">
+                <img src="Resources/1 (2).jpg"/>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    
+</div>
 
-Welcome to your new app.
+@code{
+    private List<Dish> dishes = new ();
+    protected override async Task OnInitializedAsync()
+    {
+        dishes = await DishRepository.ReadAllAsync();
+    }
+
+
+}
