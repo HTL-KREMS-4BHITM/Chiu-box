@@ -6,7 +6,7 @@ namespace Model.Entites;
 public class Allergens
 {
     [Column("ALLERGENS_ID"), MaxLength(25)]
-    public string? AllergensId { get; set; }
+    public int? AllergensId { get; set; }
     
     [Column("ALLERGENTYPE"), MaxLength(25)]
     public string? AllergenType { get; set; }
