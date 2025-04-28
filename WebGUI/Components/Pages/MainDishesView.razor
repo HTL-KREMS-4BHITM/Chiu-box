@@ -1,6 +1,9 @@
 ﻿@page "/mainDishesView"
+@using Domain.Repositories.Interfaces
 @using Model.Entites
 @using WebGUI.Components.Components
+@inject IRepositoryAsync<Dish> DishRepositoryAsync
+
 <h3>MainDishesView</h3>
 
 <div>
@@ -41,11 +44,11 @@
 
 @code {
 
-    List<Dish> dishes = new()
+    List<Dish> dishes = new();
+    protected override async Task OnInitializedAsync()
     {
-        new Dish() { Name = "Achtschätze", DishId = 1, Description = "loremwenfjrnfnwsjoiffnvs", Code = "2B4C", Price = 10},
-        new Dish() { Name = "hun mit erbsen", DishId = 2, Description = "werfcsdcsdwdccvcrvfrfsfdfer", Code = "EF34", Price = 6}
-    };
-
+        dishes = await DishRepositoryAsync.ReadAllAsync();
     }
+
+}
 

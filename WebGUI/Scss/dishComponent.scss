@@ -1,17 +1,26 @@
 ﻿@use "colors.scss" as *;
 .dish{
+  border-radius: 12px;
   padding: 6px;
-  h3{
+  h1{
     font: {
       size: 20px;
     }
+    margin-bottom: 0;
+    margin-top: 4px;
+  }
+  p{
+    margin: 0;
+    padding: 0;
   }
   .bi-info-circle-fill{
     color:$secondary;
   }
   .addBtn{
+    border-radius: 8px;
     background:$primary;
     color:$textWhite;
+    height:fit-content;
   }
   .addBtn:hover{
     background:$secondary;
