@@ -1,45 +1,64 @@
-﻿//if we want to use defined variables and colors we need to include them here with a '@use'
-@use "variables" as *;
+﻿@use "variables" as *;
 @use "colors" as *;
-.section-header{
-  .navbar{
+
+.section-header {
+  width: 100%;
+  overflow-x: hidden;
+
+  .navbar {
     background-color: $primary;
+    padding: 0.5rem 0;
+
+    .container {
+      max-width: 100%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
   }
 
-  .navbar-brand{
+  .navbar-brand {
     * {
-      
       line-height: 1.2;
-      font:{
+      font: {
         weight: 400;
         style: normal;
         size: 1.5rem;
       }
     }
-    
   }
 
   .nav-link {
     color: $textWhite;
     font-size: 1.2rem;
-    margin: 0 20px;
-    font:{
+    padding: 0.5rem 1rem;
+    font: {
       weight: 400;
       style: normal;
     }
   }
 
-  .nav-item:last-child .nav-link svg {
+  .nav-item:last-child .nav-link {
     width: 35px;
     height: 35px;
-  }
-  .cart {
-    background-color: $header_basket_bg;
-    
-    border-radius: 12px; 
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
+    i.bi-person-circle {
+      font-size: 1.75rem; !important;
+    }
+  }
+
+  .cart {
+    background-color: $header_basket_bg;
+    border-radius: 12px;
+    padding: 0.25rem 0.75rem;
+    margin-left: 0.5rem;
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
 }
