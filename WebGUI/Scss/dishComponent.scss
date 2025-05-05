@@ -1,10 +1,13 @@
 ﻿@use "colors.scss" as *;
 .dish{
+  min-height: 100%;
   border-radius: 12px;
   padding: 6px;
+
   h1{
     font: {
       size: 1rem;
+      weight: 600;
     }
     margin-bottom: 0;
     margin-top: 4px;
@@ -13,7 +16,7 @@
     margin: 0;
     padding: 0;
   }
-  .bi-info-circle-fill{
+  .bi{
     color:$secondary;
   }
   .addBtn{
@@ -28,6 +31,7 @@
   }
   .price{
     color:$secondary;
+
   }
   .description{
     min-height: 24px;
