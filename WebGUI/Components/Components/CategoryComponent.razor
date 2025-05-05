@@ -1,0 +1,25 @@
+﻿@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<Category> CategoRepository
+
+@foreach (var category in Categories)
+{
+    
+    <a href="@category.Name">
+        @category.Name
+    </a>
+}
+
+
+<hr>
+
+
+@code {
+    public List<Category> Categories { get; set; }
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        Categories = await CategoRepository.ReadAllAsync();
+    }
+
+}
