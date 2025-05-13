@@ -1,0 +1,10 @@
+﻿@use "colors" as *;
+.mainDishesView{
+  a{
+    
+    all: unset;
+    text-underline: none;
+    color: $hyperLinks;
+  }
+  
+}

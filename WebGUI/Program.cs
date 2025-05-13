@@ -43,9 +43,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
 
-
-
-builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
+builder.Services.AddTransient<IRepositoryAsync<Category>, CategoryRepositoryAsync>();
 
 var app = builder.Build();
 
