@@ -33,11 +33,41 @@
   }
   .price{
     color:$secondary;
+
   }
   .description{
     min-height: 24px;
     flex-grow: 1;
   }
 
+  position: relative;
+  display: inline-block;
+  
+}
 
+.Allergene {
+  position: relative;
+  display: inline-block;
+  
+}
+
+.Allergene .tooltiptext {
+  visibility: hidden;
+  
+  background-color: white;
+  color: $textPrimary;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  width: 120px;
+  top: 100%;
+  left: 50%;
+  margin-left: -60px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.Allergene:hover .tooltiptext {
+  visibility: visible;
 }
