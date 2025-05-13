@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Domain.Repositories.Implementations;
 using Domain.Repositories.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -6,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
 using Model.Entites;
 using WebGUI.Components;
-using WebGUI.Components.Account;
-using WebGUI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +15,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
-builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -27,23 +22,6 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
-
-
-
-//
 builder.Services.AddDbContextFactory<DishContext>(
     options => options.UseMySql(
         builder.Configuration
@@ -52,11 +30,20 @@ builder.Services.AddDbContextFactory<DishContext>(
     )
 );
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+/*builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString));*/
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+
+
+//
+
+
 builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
 
-
-
-builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
+builder.Services.AddTransient<IRepositoryAsync<Category>, CategoryRepositoryAsync>();
 
 var app = builder.Build();
 
@@ -81,6 +68,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // Add additional endpoints required by the Identity /Account Razor components.
-app.MapAdditionalIdentityEndpoints();
 
 app.Run();

@@ -1,0 +1,8 @@
+﻿@use "colors" as *;
+
+%base-override-img{
+  .form-height {
+    height: 100%;
+    object-fit: cover;
+  }
+}

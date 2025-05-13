@@ -1,8 +1,10 @@
 ﻿@use "colors.scss" as *;
 .dish{
+
   min-height: 100%;
   border-radius: 12px;
   padding: 6px;
+  
 
   h1{
     font: {
@@ -35,6 +37,7 @@
   }
   .description{
     min-height: 24px;
+    flex-grow: 1;
   }
 
   position: relative;
