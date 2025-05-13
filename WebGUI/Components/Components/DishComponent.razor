@@ -13,7 +13,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="col-12 my-1 description">
+                <div class="col-12  description">
                     @Dish.Description
                 </div>
                 <div class="col-12">
@@ -29,7 +29,13 @@
                     <button class="addBtn btn">+</button>
                 </div>
                 <div class="col-12 d-flex justify-content-center mt-auto">
-                    <i class="bi bi-info-circle-fill"></i>
+                    
+                    <div class="Allergene">
+                        <i class="bi bi-info-circle-fill info-icon"></i>
+                        <span class="tooltiptext">Allergen</span>
+                    </div>
+                        
+
                 </div>
             </div>
         </div>
@@ -42,5 +48,6 @@
 </div>
 
 @code {
-    [Parameter] public Dish Dish { get; set; }
+    [Parameter] public Dish Dish { get; set; } 
+    [Parameter] public AllergenDishesJT AllergenDishesJt { get; set; }
 }
