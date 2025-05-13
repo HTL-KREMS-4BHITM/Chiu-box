@@ -27,38 +27,58 @@
     }
   }
 
+  .navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; // Abstand zwischen Navigationseinträgen
+  }
+
   .nav-link {
     color: $textWhite;
     font-size: 1.2rem;
     padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
     font: {
       weight: 400;
       style: normal;
     }
-  }
 
-  .nav-item:last-child .nav-link {
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    i.bi-person-circle {
-      font-size: 1.75rem !important;
+    &:hover {
+      color: lighten($textWhite, 10%);
     }
   }
 
+  // Warenkorb-Button
   .cart {
     background-color: $header_basket_bg;
     border-radius: 12px;
-    padding: 0.25rem 0.75rem;
+    padding: 0.5rem 1rem;
     margin-left: 0.5rem;
 
     .nav-link {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      padding: 0;
+      color: $textWhite;
+
+      i {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  // Icon für Benutzer
+  .nav-item:last-child .nav-link {
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i.bi-person-circle {
+      font-size: 1.75rem;
+      color: $textWhite;
     }
   }
 }
