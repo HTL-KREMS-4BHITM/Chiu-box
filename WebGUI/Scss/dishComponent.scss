@@ -1,12 +1,16 @@
 ﻿@use "colors.scss" as *;
-.dish{
+.dish {
 
   min-height: 100%;
+  min-width: 100%;
   border-radius: 12px;
   padding: 6px;
+  position: relative;
+  display: inline-block;
   
 
-  h1{
+
+  h1 {
     font: {
       size: 1rem;
       weight: 600;
@@ -14,60 +18,63 @@
     margin-bottom: 0;
     margin-top: 4px;
   }
-  p{
+
+  p {
     margin: 0;
     padding: 0;
   }
-  .bi{
-    color:$secondary;
-  }
-  .addBtn{
-    border-radius: 8px;
-    background:$primary;
-    color:$textWhite;
-    height:fit-content;
-  }
-  .addBtn:hover{
-    background:$secondary;
-    color:$textWhite;
-  }
-  .price{
-    color:$secondary;
 
+  .bi {
+    color: $secondary;
   }
-  .description{
+
+  .addBtn {
+    border-radius: 8px;
+    background: $primary;
+    color: $textWhite;
+    height: fit-content;
+  }
+
+  .addBtn:hover {
+    background: $secondary;
+    color: $textWhite;
+  }
+
+  .price {
+    color: $secondary;
+  }
+
+  .description {
     min-height: 24px;
     flex-grow: 1;
   }
 
-  position: relative;
-  display: inline-block;
-  
-}
 
-.Allergene {
-  position: relative;
-  display: inline-block;
-  
-}
 
-.Allergene .tooltiptext {
-  visibility: hidden;
-  
-  background-color: white;
-  color: $textPrimary;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  width: 120px;
-  top: 100%;
-  left: 50%;
-  margin-left: -60px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
+  .Allergene {
+    position: relative;
+    display: inline-block;
 
-.Allergene:hover .tooltiptext {
-  visibility: visible;
+  }
+
+  .Allergene .tooltiptext {
+    visibility: hidden;
+
+    background-color: white;
+    color: $textPrimary;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    width: 120px;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+  }
+
+  .Allergene:hover .tooltiptext {
+    visibility: visible;
+  }
 }

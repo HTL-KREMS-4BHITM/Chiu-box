@@ -2,10 +2,10 @@
 @using Model.Entites
 @inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
 @inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
-<div class="card dish">
-    <div class="row">
+<div class="card dish d-flex">
+    <div class="row flex-grow-1">
         <div class="col-9">
-            <div class="row ps-3">
+            <div class="row h-100 ps-3">
                 <div class="col-12">
                     <div class="d-flex flex-row flex-wrap">
                         <h1>
@@ -20,8 +20,8 @@
                 <div class="col-12  description">
                     @Dish.Description
                 </div>
-                <div class="col-12">
-                    <p class="price">
+                <div class="col-12 d-flex ">
+                    <p class="price mt-auto">
                         @Dish.Price
                     </p>
                 </div>
@@ -38,8 +38,6 @@
                         <i class="bi bi-info-circle-fill info-icon"></i>
                         <span class="tooltiptext">Allergen</span>
                     </div>
-                        
-
                 </div>
             </div>
         </div>
