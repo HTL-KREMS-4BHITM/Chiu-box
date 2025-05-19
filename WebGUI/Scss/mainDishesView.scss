@@ -1,8 +1,8 @@
 ﻿@use "colors" as *;
 .mainDishesView{
   a{
-    
-    all: unset;
+
+    cursor: pointer;
     text-underline: none;
     color: $hyperLinks;
   }

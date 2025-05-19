@@ -53,6 +53,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Category>, CategoryRepositoryAsync>();
+builder.Services.AddTransient<IRepositoryAsync<CategoriesDishesJT>, CategoriesDishesJtRepoAsync>();
 builder.Services.AddTransient<IRepositoryAsync<AllergenDishesJT>, AllergensDishesJTRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Allergens>, AllergensRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<User>,UserRepoAsync>();
