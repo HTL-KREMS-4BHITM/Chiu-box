@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using Domain.Repositories.Implementations;
 using Domain.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddAuthentication(options =>
+builder.Services.AddHttpContextAccessor();
+
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
+        options.Cookie.Name = "auth_token";
+        options.LoginPath = "/login";
+        options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+        options.AccessDeniedPath = "/accessdenied";
+    });
+
+
+
+builder.Services.AddCascadingAuthenticationState();
+
 
 builder.Services.AddDbContextFactory<DishContext>(
     options => options.UseMySql(
@@ -45,6 +55,7 @@ builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Category>, CategoryRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<AllergenDishesJT>, AllergensDishesJTRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Allergens>, AllergensRepositoryAsync>();
+builder.Services.AddTransient<IRepositoryAsync<User>,UserRepoAsync>();
 
 var app = builder.Build();
 
@@ -64,6 +75,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

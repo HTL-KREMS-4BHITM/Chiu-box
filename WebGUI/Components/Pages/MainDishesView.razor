@@ -1,9 +1,15 @@
 ﻿@page "/mainDishesView"
+@using System.Security.Claims
 @using Domain.Repositories.Interfaces
 @using Model.Entites
 @using WebGUI.Components.Components
 @inject IRepositoryAsync<Dish> DishRepositoryAsync
 @inject IRepositoryAsync<Category> CategoryRepository
+@inject IRepositoryAsync<User> UserRepoAsync
+@inject IHttpContextAccessor HttpContextAccessor;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
 
 <div class="container mainDishesView">
     
@@ -18,11 +24,12 @@
             <a href="@category.Name">
                 @category.Name
             </a>
+            
         }
     </div>
     <hr>
 
-
+    
         
     <div class="row g-4">
         
@@ -37,28 +44,43 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 @code {
 
     List<Dish> dishes = new();
     private List<Category> Categories { get; set; } = new();
+    private string UserName;
+    private List<User> CurrentUser = new(); 
 
     protected override async Task OnInitializedAsync()
     {
         dishes = await DishRepositoryAsync.ReadAllAsync();
         Categories = await CategoryRepository.ReadAllAsync();
 
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            UserName = user.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+            if (!string.IsNullOrEmpty(UserName))
+            {
+                CurrentUser = await UserRepoAsync.ReadAsync(u => u.Username == UserName);
+                if (CurrentUser.Count > 0)
+                {
+                    Console.WriteLine(CurrentUser[0].Username);
+                }
+                else
+                {
+                    Console.WriteLine("User not found in DB.");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("Not authenticated.");
+        }
     }
+
   
 
     
