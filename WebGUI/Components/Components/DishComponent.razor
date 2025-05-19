@@ -1,4 +1,7 @@
-﻿@using Model.Entites
+﻿@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
+@inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
 <div class="card dish">
     <div class="row">
         <div class="col-9">
@@ -50,4 +53,15 @@
 @code {
     [Parameter] public Dish Dish { get; set; } 
     [Parameter] public AllergenDishesJT AllergenDishesJt { get; set; }
+    private List<AllergenDishesJT> _allergensDishes = new();
+    private List<Allergens> _allergens = new();
+    protected override async Task OnInitializedAsync()
+    {
+        _allergensDishes = await AllergensDishesJTRepositoryAsync.ReadAsync(d => d.DishId == Dish.DishId);
+        foreach (var aller in _allergensDishes)
+        {
+            
+        }
+    }
+
 }

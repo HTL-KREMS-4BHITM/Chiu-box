@@ -12,9 +12,7 @@
     <div class="container">
         <h3 class="text-center mb-4">Sign Up</h3>
         <div class="row justify-content-center align-items-stretch">
-            <div class="col-lg-4 d-flex me-0 ps-0 pe-0 border border-end-0 align-items-center ">
-                <img src="Resources/register.jpg" class="img-fluid shadow form-height" alt="Asian Food">
-            </div>
+            
             <div class="signup_container col-lg-4 ms-0 me-0 ps-0 pe-0 h-100">
                 <EditForm Model="@Model" OnValidSubmit="RegisterUser" FormName="SinguPForm" class="p-4 border rounded shadow">
                     <div class="mb-4 border-bottom border-secondary mt-5">
@@ -34,7 +32,7 @@
                         <span class="text-danger">@errorMessage</span>
                     </div>
                     <div class="mb-3">
-                        <button type="submit" class="signup w-50 btn text-light w-100 mb-5 mt-3 pb-2">Signup</button>
+                        <button type="submit" class="signup w-50 btn text-light w-100 mb-5 mt-3 pb-2" style="background-color: #457123">Signup</button>
                     </div>
                 </EditForm>
             </div>
