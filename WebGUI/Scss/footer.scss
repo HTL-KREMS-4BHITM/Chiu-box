@@ -1,0 +1,17 @@
+﻿@use "colors" as *;
+.section-footer{
+  background-color: $primary;
+  color: $textWhite;
+  * {
+    margin: 0;
+  }
+  .container-fluid{
+    margin: 0;
+    padding: 1.5rem 0 1.5rem 0;
+    *{
+      align-content: center;
+    }
+  }
+
+
+}

@@ -15,7 +15,6 @@
                             (@Dish.Code)
                         </p>
                     </div>
-                    
                 </div>
                 <div class="col-12  description">
                     @Dish.Description
@@ -33,11 +32,12 @@
                     <button class="addBtn btn">+</button>
                 </div>
                 <div class="col-12 d-flex justify-content-center mt-auto">
-                    
-                    <div class="Allergene">
+                    <div class="Allergene @(showTooltip ? "active" : "")" @onclick="ToggleTooltip">
                         <i class="bi bi-info-circle-fill info-icon"></i>
                         <span class="tooltiptext">Allergen</span>
                     </div>
+                        
+
                 </div>
             </div>
         </div>
@@ -52,15 +52,11 @@
 @code {
     [Parameter] public Dish Dish { get; set; } 
     [Parameter] public AllergenDishesJT AllergenDishesJt { get; set; }
-    private List<AllergenDishesJT> _allergensDishes = new();
-    private List<Allergens> _allergens = new();
-    protected override async Task OnInitializedAsync()
+    
+    private bool showTooltip = false;
+    
+    private void ToggleTooltip()
     {
-        // _allergensDishes = await AllergensDishesJTRepositoryAsync.ReadAsync(d => d.DishId == Dish.DishId);
-        // foreach (var aller in _allergensDishes)
-        // {
-        //     
-        // }
+        showTooltip = !showTooltip;
     }
-
 }
