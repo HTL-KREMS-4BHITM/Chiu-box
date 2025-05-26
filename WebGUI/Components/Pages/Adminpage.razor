@@ -1,0 +1,179 @@
+﻿@page "/admin"
+@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<Dish> DishRepositoryAsync
+@rendermode InteractiveServer
+
+<style>
+    .grayed-out {
+        opacity: 0.5;
+    }
+
+    .toolbar {
+        position: fixed;
+        right: 20px;
+        top: 100px;
+    }
+
+</style>
+
+<div class="container">
+    <h3>Dish Management</h3>
+@if (dishes == null)
+    {
+        <div>Loading...</div>
+    }
+    else
+    {
+
+
+        <div class="row">
+            <div class="col-md-9">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" @onclick="ToggleAll"/></th>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var dish in dishes)
+                    {
+                        <tr class="@((dish.IsOutOfStock ? "table-secondary" : ""))">
+                            <td><input type="checkbox" @bind="dish.IsSelected"/></td>
+                            <td>@dish.Code</td>
+                            <td>@dish.Name</td>
+                            <td>@dish.Description</td>
+                            <td>@dish.Price.ToString("C")</td>
+                            <td>@(dish.IsOutOfStock ? "Out of Stock" : "Verfügbar")</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" @onclick="() => EditDish(dish)">Edit</button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+
+                @if (selectedDish != null)
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">Edit Dish</div>
+                        <div class="card-body">
+                            <EditForm Model="@selectedDish" OnValidSubmit="SaveDish">
+                                <DataAnnotationsValidator/>
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <InputText class="form-control" @bind-Value="selectedDish.Name"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <InputText class="form-control" @bind-Value="selectedDish.Description"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Code</label>
+                                    <InputText class="form-control" @bind-Value="selectedDish.Code"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price</label>
+                                    <InputNumber class="form-control" @bind-Value="selectedDish.Price"/>
+                                </div>
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-secondary ms-2" @onclick="CancelEdit">Cancel</button>
+                            </EditForm>
+                        </div>
+                    </div>
+                }
+
+                <div class="mt-4">
+                    <h5>Upload CSV to Add Dishes</h5>
+                    <InputFile OnChange="UploadCsv" class="form-control"/>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="border rounded p-3 bg-light sticky-top" style="top: 100px;">
+                    <h5>Bulk Actions</h5>
+                    <button class="btn btn-danger w-100 mb-2" @onclick="DeleteSelected">Delete Selected</button>
+                    <button class="btn btn-warning w-100" @onclick="ToggleOutOfSale">Mark Out of Sale</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Dish> dishes;
+    private Dish selectedDish;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dishes = await DishRepositoryAsync.ReadAllAsync();
+    }
+
+    private void EditDish(Dish dish)
+    {
+        selectedDish = new Dish
+        {
+            DishId = dish.DishId,
+            Name = dish.Name,
+            Description = dish.Description,
+            Price = dish.Price,
+            Code = dish.Code
+        };
+    }
+
+    private async Task SaveDish()
+    {
+        await DishRepositoryAsync.UpdateAsync(selectedDish);
+        selectedDish = null;
+        dishes = await DishRepositoryAsync.ReadAllAsync();
+    }
+
+    private async Task DeleteSelected()
+    {
+        var toDelete = dishes.Where(d => d.IsSelected).Select(d => d.DishId).ToList();
+        foreach (var curdish in toDelete)
+        {
+            await DishRepositoryAsync.DeleteAsync(curdish);
+        }
+        dishes = await DishRepositoryAsync.ReadAllAsync();
+    }
+
+    private async Task ToggleOutOfSale()
+    {
+        var selected = dishes.Where(d => d.IsSelected).ToList();
+        foreach (var d in selected)
+        {
+            d.IsOutOfStock = !d.IsOutOfStock; 
+        }
+        foreach (var curdish in selected)
+        {
+            await DishRepositoryAsync.UpdateAsync(curdish);
+        }
+        dishes = await DishRepositoryAsync.ReadAllAsync();
+    }
+
+    
+    private void ToggleAll()
+    {
+        bool anyUnchecked = dishes.Any(d => !d.IsSelected);
+        foreach (var dish in dishes)
+        {
+            dish.IsSelected = anyUnchecked;
+        }
+    }
+    
+    private async Task UploadCsv(InputFileChangeEventArgs e)
+    {
+        
+    }
+    private void CancelEdit()
+    {
+        selectedDish = null;
+    }
+}
