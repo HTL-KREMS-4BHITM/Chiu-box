@@ -167,34 +167,10 @@
             dish.IsSelected = anyUnchecked;
         }
     }
+    
     private async Task UploadCsv(InputFileChangeEventArgs e)
     {
-        var file = e.File;
-        using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-
-        string line;
-        var newDishes = new List<Dish>();
-
-        while ((line = await reader.ReadLineAsync()) != null)
-        {
-            var parts = line.Split(',');
-            if (parts.Length >= 3)
-            {
-                newDishes.Add(new Dish
-                {
-                    Name = parts[0],
-                    Description = parts[1],
-                    Price = decimal.Parse(parts[2])
-                });
-            }
-        }
-
-        foreach (var newdish in newDishes)
-        {
-            await DishRepositoryAsync.CreateAsync(newdish);
-        }
-        dishes = await DishRepositoryAsync.ReadAllAsync();
+        
     }
     private void CancelEdit()
     {
