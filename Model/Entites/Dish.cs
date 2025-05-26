@@ -27,5 +27,12 @@ public class Dish
     
     [Column ("SUPPLEMENTTYPE"), MaxLength(10)]
     public ESupplementType? Type { get; set; }
+    
+    [Column ("IsOutOfStock")]
+    public bool IsOutOfStock { get; set; }
+    
+    
+    [Column ("IsSelected")]
+    public bool IsSelected { get; set; }
 }
 
