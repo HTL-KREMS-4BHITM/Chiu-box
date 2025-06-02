@@ -2,11 +2,11 @@
 @using Model.Entites
 @inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
 @inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
-<div class="card dish d-flex">
+<div class="card dish d-flex @((Dish.IsOutOfStock ? "opacity-75" : "")) ">
     <div class="row flex-grow-1">
         <div class="col-9">
             <div class="row h-100 ps-3">
-                <div class="col-12">
+                <div class="col-12 ">
                     <div class="d-flex flex-row flex-wrap">
                         <h1>
                             @Dish.Name 
@@ -29,7 +29,7 @@
         <div class="col-3">
             <div class="row h-100">
                 <div class="col-12 d-flex justify-content-center pe-0">
-                    <button class="addBtn btn">+</button>
+                    <button class="addBtn btn" disabled="@Dish.IsOutOfStock">+</button>
                 </div>
                 <div class="col-12 d-flex justify-content-center mt-auto">
                     <div class="Allergene @(showTooltip ? "active" : "")" @onclick="ToggleTooltip">

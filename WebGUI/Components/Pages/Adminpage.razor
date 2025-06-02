@@ -52,7 +52,7 @@
                             <td>@dish.Price.ToString("C")</td>
                             <td>@(dish.IsOutOfStock ? "Out of Stock" : "Verfügbar")</td>
                             <td>
-                                <button class="btn btn-sm btn-primary" @onclick="() => EditDish(dish)">Edit</button>
+                                <button class="btn btn-sm btn-primary" @onclick="() => EditDish(dish)"><i class="bi bi-pencil"></i></button>
                             </td>
                         </tr>
                     }
