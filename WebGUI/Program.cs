@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
 using Model.Entites;
 using WebGUI.Components;
+using WebGUI.Components.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,13 @@ builder.Services.AddTransient<IRepositoryAsync<CategoriesDishesJT>, CategoriesDi
 builder.Services.AddTransient<IRepositoryAsync<AllergenDishesJT>, AllergensDishesJTRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Allergens>, AllergensRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<User>,UserRepoAsync>();
+
+//
+builder.Services.AddScoped<ShoppingCart>();
+
+
+
+
 
 var app = builder.Build();
 

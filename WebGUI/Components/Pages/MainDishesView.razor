@@ -10,6 +10,7 @@
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
+@inject ShoppingCart ShoppingCart
 
 
 
@@ -17,6 +18,8 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Hauptspeisen</h4>
+
+        <ShoppingCart ItemCount="ShoppingCart.ItemCount" />
     </div>
     <div class="d-flex justify-content-around">
  
@@ -39,7 +42,7 @@
         @foreach (var dish in dishes)
         {
             <div class="col-4">
-                <DishComponent  Dish="dish"></DishComponent>
+                <DishComponent OnAddToCart="() => ShoppingCart.AddItem()" Dish="dish"></DishComponent>
             </div>
         }
     </div>
