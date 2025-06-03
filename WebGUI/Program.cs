@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using Blazored.SessionStorage;
 using Domain.Repositories.Implementations;
 using Domain.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
 using Model.Entites;
 using WebGUI.Components;
-using WebGUI.Components.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +48,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
 
-
+//
 
 
 builder.Services.AddTransient<IRepositoryAsync<Dish>, DishRepositoryAsync>();
@@ -59,10 +57,6 @@ builder.Services.AddTransient<IRepositoryAsync<CategoriesDishesJT>, CategoriesDi
 builder.Services.AddTransient<IRepositoryAsync<AllergenDishesJT>, AllergensDishesJTRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Allergens>, AllergensRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<User>,UserRepoAsync>();
-
-//
-builder.Services.AddScoped<ShoppingCart>();
-builder.Services.AddBlazoredSessionStorage();
 
 var app = builder.Build();
 

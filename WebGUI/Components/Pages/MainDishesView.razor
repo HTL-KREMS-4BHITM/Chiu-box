@@ -7,14 +7,9 @@
 @inject IRepositoryAsync<Category> CategoryRepository
 @inject IRepositoryAsync<CategoriesDishesJT> CategoriesDishesJTRepoAsync; 
 @inject IRepositoryAsync<User> UserRepoAsync
+@inject IHttpContextAccessor HttpContextAccessor;
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ShoppingCart ShoppingCartService
 @rendermode InteractiveServer
-
-
-
-
-
 
 
 
@@ -22,17 +17,17 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Hauptspeisen</h4>
-        <ShoppingCart ItemCount="ShoppingCartService.ItemCount" />
     </div>
     <div class="d-flex justify-content-around">
-
-        
-        
+ 
         @foreach (var category in Categories)
         {
+            
             <a @onclick="()=>UpdateDishes(category.CategoriesId)">
                 @category.Name
+                
             </a>
+            
         }
     </div>
     <hr>
@@ -40,13 +35,13 @@
     
         
     <div class="row g-4">
+        
         @foreach (var dish in dishes)
         {
             <div class="col-4">
-                <DishComponent OnAddToCart="() => ShoppingCartService.AddItem()" Dish="dish"></DishComponent>
+                <DishComponent  Dish="dish"></DishComponent>
             </div>
         }
-        
     </div>
 </div>
 
@@ -61,7 +56,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ShoppingCartService.OnChange += StateHasChanged;
         dishes = await DishRepositoryAsync.ReadAllAsync();
         Categories = await CategoryRepository.ReadAllAsync();
 
@@ -110,8 +104,8 @@
     
     
     #endregion
-    
 
+  
 
     
 }
