@@ -67,7 +67,7 @@
         var principal = new ClaimsPrincipal(identity);
 
         await HttpContext!.SignInAsync(principal);
-        NavigationManager.NavigateTo("/mainDishesView");
+        NavigationManager.NavigateTo("/admin");
     }
 
 
