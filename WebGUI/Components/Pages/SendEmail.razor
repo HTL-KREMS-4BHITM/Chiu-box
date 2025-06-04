@@ -1,0 +1,52 @@
+﻿@page "/order-confirmation"
+@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<Dish> DisRepositoryAsync 
+@inject EmailService EmailService
+@rendermode InteractiveServer
+
+<h3 class="text-xl font-bold mb-4">Send Order Confirmation</h3>
+
+<div class="space-y-4">
+    <input @bind="CustomerEmail" class="input" placeholder="Customer Email" />
+    <input @bind="RestaurantName" class="input" placeholder="Restaurant Name" />
+    <input @bind="RestaurantAddress" class="input" placeholder="Restaurant Address" />
+    
+
+    <button class="btn btn-primary mt-4" @onclick="Send">Send Confirmation</button>
+
+    @if (!string.IsNullOrWhiteSpace(Status))
+    {
+        <p class="mt-4 text-sm">@Status</p>
+    }
+</div>
+
+@code {
+    private string CustomerEmail;
+    private string RestaurantName;
+    private string RestaurantAddress;
+    private List<Dish> OrderItems = new() ;
+    private string Status;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var dishes = await DisRepositoryAsync.ReadAllAsync();
+        for (int i = 0; i < 10; i++)
+        {
+            OrderItems.Add(dishes[i]);
+        }
+    }
+
+    private async Task Send()
+    {
+        try
+        {
+            await EmailService.SendOrderConfirmation(CustomerEmail, RestaurantName, RestaurantAddress, OrderItems);
+            Status = "✅ Email sent successfully!";
+        }
+        catch (Exception ex)
+        {
+            Status = $"❌ Failed: {ex.Message}";
+        }
+    }
+}
