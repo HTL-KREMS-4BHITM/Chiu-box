@@ -3,6 +3,7 @@ using Domain.Repositories.Implementations;
 using Domain.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
@@ -64,7 +65,9 @@ builder.Services.AddSingleton<EmailService>();
 
 //
 builder.Services.AddScoped<ShoppingCart>();
-
+builder.Services.AddRazorComponents();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddScoped<ProtectedSessionStorage>();
 
 
 
