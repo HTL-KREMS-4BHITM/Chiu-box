@@ -2,6 +2,7 @@
 @using Model.Entites
 @inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
 @inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
+@rendermode InteractiveServer
 <div class="card dish d-flex @((Dish.IsOutOfStock ? "opacity-75" : "")) ">
     <div class="row flex-grow-1">
         <div class="col-9">
