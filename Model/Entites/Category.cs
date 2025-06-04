@@ -11,4 +11,7 @@ public class Category
     
     [Column("CATEGORY_NAME"), Required, MaxLength(20)]
     public string? Name { get; set; }
+    
+    [Column("MAINTYPE")]
+    public string? MainType{ get; set; }
 }

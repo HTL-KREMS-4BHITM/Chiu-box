@@ -2,6 +2,7 @@
 @using Domain.Repositories.Interfaces
 @using Model.Entites
 @inject IRepositoryAsync<Dish> DishRepositoryAsync
+@inject IRepositoryAsync<CategoriesDishesJT> CategoryDishesJTRepositoryAsync
 @rendermode InteractiveServer
 
 <style>
@@ -15,85 +16,151 @@
         top: 100px;
     }
 
+    .edit-row td {
+        background-color: #f8f9fa;
+    }
 </style>
 
-<div class="container">
-    <h3>Dish Management</h3>
-@if (dishes == null)
+<div class="container mt-5">
+    <h3 class="d-flex justify-content-center mb-4">Dish Management</h3>
+
+    <div class="mb-4">
+        <button class="btn btn-success" @onclick="ToggleCreateForm">
+            @(showCreateForm ? "Hide" : "New Dish")
+        </button>
+    </div>
+
+    @if (showCreateForm)
+    {
+        <div class="card mb-5">
+            <div class="card-header">Create New Dish</div>
+            <div class="card-body">
+                <EditForm Model="@newDish" OnValidSubmit="CreateDish">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <InputText class="form-control" @bind-Value="newDish.Name" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <InputText class="form-control" @bind-Value="newDish.Description" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Code</label>
+                        <InputText class="form-control" @bind-Value="newDish.Code" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <InputNumber class="form-control" @bind-Value="newDish.Price" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Categories</label>
+                        @foreach (var category in categoryOptions)
+                        {
+                            <div class="form-check">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="cat_@category.Id"
+                                       value="@category.Id"
+                                       checked="@selectedCategoryIds.Contains(category.Id)"
+                                       @onchange="() => ToggleCategorySelection(category.Id)" />
+                                <label class="form-check-label" for="cat_@category.Id">@category.Name</label>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Supplement Type</label>
+                        <InputText class="form-control" @bind-Value="newDish.SupplementType" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Dish</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+    @if (dishes == null)
     {
         <div>Loading...</div>
     }
     else
     {
-
-
         <div class="row">
             <div class="col-md-9">
                 <table class="table table-striped">
                     <thead>
-                    <tr>
-                        <th><input type="checkbox" @onclick="ToggleAll"/></th>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
+                        <tr>
+                            <th><input type="checkbox" @onclick="ToggleAll" /></th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @foreach (var dish in dishes)
-                    {
-                        <tr class="@((dish.IsOutOfStock ? "table-secondary" : ""))">
-                            <td><input type="checkbox" @bind="dish.IsSelected"/></td>
-                            <td>@dish.Code</td>
-                            <td>@dish.Name</td>
-                            <td>@dish.Description</td>
-                            <td>@dish.Price.ToString("C")</td>
-                            <td>@(dish.IsOutOfStock ? "Out of Stock" : "Verfügbar")</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" @onclick="() => EditDish(dish)"><i class="bi bi-pencil"></i></button>
-                            </td>
-                        </tr>
-                    }
+                        @foreach (var dish in dishes)
+                        {
+                            <tr class="@((dish.IsOutOfStock ? "table-secondary" : ""))">
+                                <td><input type="checkbox" @bind="dish.IsSelected" /></td>
+                                <td>@dish.Code</td>
+                                <td>@dish.Name</td>
+                                <td>@dish.Description</td>
+                                <td>@dish.Price.ToString("C")</td>
+                                <td>@(dish.IsOutOfStock ? "Out of Stock" : "Verfügbar")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" @onclick="() => EditDish(dish)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            @if (selectedDish != null && selectedDish.DishId == dish.DishId)
+                            {
+                                <tr class="edit-row">
+                                    <td colspan="7">
+                                        <div class="p-3 border rounded bg-light">
+                                            <EditForm Model="@selectedDish" OnValidSubmit="SaveDish">
+                                                <DataAnnotationsValidator />
+                                                <div class="mb-3">
+                                                    <label class="form-label">Name</label>
+                                                    <InputText class="form-control" @bind-Value="selectedDish.Name" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Description</label>
+                                                    <InputText class="form-control" @bind-Value="selectedDish.Description" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Code</label>
+                                                    <InputText class="form-control" @bind-Value="selectedDish.Code" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Price</label>
+                                                    <InputNumber class="form-control" @bind-Value="selectedDish.Price" />
+                                                </div>
+                                                <button type="submit" class="btn btn-success">Save</button>
+                                                <button type="button" class="btn btn-secondary ms-2" @onclick="CancelEdit">Cancel</button>
+                                            </EditForm>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
-
-                @if (selectedDish != null)
-                {
-                    <div class="card mt-4">
-                        <div class="card-header">Edit Dish</div>
-                        <div class="card-body">
-                            <EditForm Model="@selectedDish" OnValidSubmit="SaveDish">
-                                <DataAnnotationsValidator/>
-                                <div class="mb-3">
-                                    <label class="form-label">Name</label>
-                                    <InputText class="form-control" @bind-Value="selectedDish.Name"/>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    <InputText class="form-control" @bind-Value="selectedDish.Description"/>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Code</label>
-                                    <InputText class="form-control" @bind-Value="selectedDish.Code"/>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Price</label>
-                                    <InputNumber class="form-control" @bind-Value="selectedDish.Price"/>
-                                </div>
-                                <button type="submit" class="btn btn-success">Save</button>
-                                <button type="button" class="btn btn-secondary ms-2" @onclick="CancelEdit">Cancel</button>
-                            </EditForm>
-                        </div>
-                    </div>
-                }
-
             </div>
 
             <div class="col-md-3">
                 <div class="border rounded p-3 bg-light sticky-top" style="top: 100px;">
-                    <h5>Bulk Actions</h5>
+                    <h5>Actions</h5>
                     <button class="btn btn-danger w-100 mb-2" @onclick="DeleteSelected">Delete Selected</button>
                     <button class="btn btn-warning w-100" @onclick="ToggleOutOfSale">Mark Out of Sale</button>
                 </div>
@@ -105,22 +172,86 @@
 @code {
     private List<Dish> dishes;
     private Dish selectedDish;
+    private Dish newDish = new();
+    private bool showCreateForm = false;
+
+    private List<int> selectedCategoryIds = new();
+    private List<(int Id, string Name)> categoryOptions = new()
+    {
+        (10, "Vorspeisen"),
+        (11, "Salate"),
+        (12, "Suppen"),
+        (1, "Hauptspeisen"),
+        (2, "Reisgerichte"),
+        (3, "Nudelgerichte"),
+        (4, "Bento-Box"),
+        (5, "Vegetarisch"),
+        (6, "Japanisch"),
+        (7, "Indische Küche"),
+        (8, "Taiwanische Küche"),
+        (9, "Kids-Box"),
+        (13, "Desserts"),
+        (14, "Beilagen")
+    };
 
     protected override async Task OnInitializedAsync()
     {
         dishes = await DishRepositoryAsync.ReadAllAsync();
     }
 
+    private void ToggleCreateForm()
+    {
+        showCreateForm = !showCreateForm;
+    }
+
+    private void ToggleCategorySelection(int categoryId)
+    {
+        if (selectedCategoryIds.Contains(categoryId))
+        {
+            selectedCategoryIds.Remove(categoryId);
+        }
+        else
+        {
+            selectedCategoryIds.Add(categoryId);
+        }
+    }
+
+    private async Task CreateDish()
+    {
+        await DishRepositoryAsync.CreateAsync(newDish);
+
+        foreach (var categoryId in selectedCategoryIds)
+        {
+            await CategoryDishesJTRepositoryAsync.CreateAsync(new CategoriesDishesJT
+            {
+                DishId = newDish.DishId,
+                CategoryId = categoryId
+            });
+        }
+
+        newDish = new Dish(); // reset form
+        selectedCategoryIds.Clear();
+        dishes = await DishRepositoryAsync.ReadAllAsync();
+        showCreateForm = false;
+    }
+
     private void EditDish(Dish dish)
     {
-        selectedDish = new Dish
+        if (selectedDish != null && selectedDish.DishId == dish.DishId)
         {
-            DishId = dish.DishId,
-            Name = dish.Name,
-            Description = dish.Description,
-            Price = dish.Price,
-            Code = dish.Code
-        };
+            selectedDish = null;
+        }
+        else
+        {
+            selectedDish = new Dish
+            {
+                DishId = dish.DishId,
+                Name = dish.Name,
+                Description = dish.Description,
+                Price = dish.Price,
+                Code = dish.Code
+            };
+        }
     }
 
     private async Task SaveDish()
@@ -130,12 +261,17 @@
         dishes = await DishRepositoryAsync.ReadAllAsync();
     }
 
+    private void CancelEdit()
+    {
+        selectedDish = null;
+    }
+
     private async Task DeleteSelected()
     {
         var toDelete = dishes.Where(d => d.IsSelected).Select(d => d.DishId).ToList();
-        foreach (var curdish in toDelete)
+        foreach (var id in toDelete)
         {
-            await DishRepositoryAsync.DeleteAsync(curdish);
+            await DishRepositoryAsync.DeleteAsync(id);
         }
         dishes = await DishRepositoryAsync.ReadAllAsync();
     }
@@ -145,16 +281,12 @@
         var selected = dishes.Where(d => d.IsSelected).ToList();
         foreach (var d in selected)
         {
-            d.IsOutOfStock = !d.IsOutOfStock; 
-        }
-        foreach (var curdish in selected)
-        {
-            await DishRepositoryAsync.UpdateAsync(curdish);
+            d.IsOutOfStock = !d.IsOutOfStock;
+            await DishRepositoryAsync.UpdateAsync(d);
         }
         dishes = await DishRepositoryAsync.ReadAllAsync();
     }
 
-    
     private void ToggleAll()
     {
         bool anyUnchecked = dishes.Any(d => !d.IsSelected);
@@ -162,10 +294,5 @@
         {
             dish.IsSelected = anyUnchecked;
         }
-    }
-    
-    private void CancelEdit()
-    {
-        selectedDish = null;
     }
 }
