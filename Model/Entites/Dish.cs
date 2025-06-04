@@ -26,7 +26,7 @@ public class Dish
     public bool IsInStock { get; set; }
     
     [Column ("SUPPLEMENTTYPE"), MaxLength(10)]
-    public string? SupplementType { get; set; }
+    public string? Type { get; set; }
     
     [Column ("IsOutOfStock")]
     public bool IsOutOfStock { get; set; }
