@@ -1,12 +1,37 @@
 ﻿@page "/order"
-
-<div class="row d-flex justify-content-center p-0">
-    <div class="col-12">
-        <h3>Warenkorb</h3>
+@using Domain.Repositories.Interfaces
+@using Model.Entites
+@using WebGUI.Components.Components
+@inject IRepositoryAsync<Dish> DishesRepositoryAsync 
+<div class="container mainDishesView">
+    
+    <div class="d-flex justify-content-center my-5">
+        <h4>Hauptspeisen</h4>
     </div>
 
+        
+    <div class="row g-4">
+        
+        @foreach (var dish in _dishes)
+        {
+            
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <OrderComponent Dish="dish"></OrderComponent>
+             
+            </div>
+        }
+    </div>
 </div>
 
+
 @code {
+    private List<Dish> _dishes = new();
+    private Dish dish = new();
     
-}
+    protected override async Task OnInitializedAsync()
+    {
+        _dishes = await DishesRepositoryAsync.ReadAllAsync();
+        dish = _dishes[0];
+    }
+
+}}

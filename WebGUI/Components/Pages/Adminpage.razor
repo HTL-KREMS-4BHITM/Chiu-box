@@ -3,6 +3,7 @@
 @using Model.Entites
 @inject IRepositoryAsync<Dish> DishRepositoryAsync
 @inject IRepositoryAsync<CategoriesDishesJT> CategoryDishesJTRepositoryAsync
+@inject IRepositoryAsync<ShopSchedule> ScheduleRepoAsync
 @rendermode InteractiveServer
 
 <style>
@@ -22,7 +23,7 @@
 </style>
 
 <div class="container mt-5">
-    <h3 class="d-flex justify-content-center mb-4">Dish Management</h3>
+    <h3 class="d-flex justify-content-center mb-4">Management</h3>
 
     <div class="mb-4">
         <button class="btn btn-success" @onclick="ToggleCreateForm">
@@ -117,7 +118,7 @@
                                 <td>@dish.Price.ToString("C")</td>
                                 <td>@(dish.IsOutOfStock ? "Out of Stock" : "Verfügbar")</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary" @onclick="() => EditDish(dish)">
+                                    <button class="btn btn-sm btn-outline-success" @onclick="() => EditDish(dish)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                 </td>
@@ -159,10 +160,59 @@
             </div>
 
             <div class="col-md-3">
-                <div class="border rounded p-3 bg-light sticky-top" style="top: 100px;">
+                <div class="border rounded p-3 bg-light sticky-top mb-4" style="top: 100px;">
                     <h5>Actions</h5>
                     <button class="btn btn-danger w-100 mb-2" @onclick="DeleteSelected">Delete Selected</button>
                     <button class="btn btn-warning w-100" @onclick="ToggleOutOfSale">Mark Out of Sale</button>
+                </div>
+                <h5 class="mt-5 mb-3">Onlineshop ausschalten</h5>
+                <table class="table border">
+                    
+                    <tbody>
+                    @if (scheduled.Count != 0)
+                    {
+                        <tr>
+                            <th scope="row">MO</th>
+                            <td><input type="time" @bind="scheduled[0].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[0].EndTime"/></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DI</th>
+                            <td><input type="time" @bind="scheduled[1].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[1].EndTime"/></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">MI</th>
+                            <td><input type="time" @bind="scheduled[2].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[2].EndTime"/></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DO</th>
+                            <td><input type="time" @bind="scheduled[3].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[3].EndTime"/></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">FR</th>
+                            <td><input type="time" @bind="scheduled[4].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[4].EndTime"/></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">SA</th>
+                            <td><input type="time" @bind="scheduled[5].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[5].EndTime"/></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">SO</th>
+                            <td><input type="time" @bind="scheduled[6].StartTime"/></td>
+                            <td><input type="time" @bind="scheduled[6].EndTime"/></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-primary btn-success col-3 me-2">Start</button>
+                    <button class="btn btn-primary btn-danger col-3 me-2" >Stop</button>
+                    <button class="btn btn-primary btn-primary col-3">Save</button>
                 </div>
             </div>
         </div>
@@ -174,6 +224,7 @@
     private Dish selectedDish;
     private Dish newDish = new();
     private bool showCreateForm = false;
+    private List<ShopSchedule> scheduled = new();
 
     private List<int> selectedCategoryIds = new();
     private List<(int Id, string Name)> categoryOptions = new()
@@ -197,6 +248,8 @@
     protected override async Task OnInitializedAsync()
     {
         dishes = await DishRepositoryAsync.ReadAllAsync();
+        scheduled = await ScheduleRepoAsync.ReadAllAsync();
+        Console.WriteLine(scheduled.Count);
     }
 
     private void ToggleCreateForm()
@@ -229,7 +282,7 @@
             });
         }
 
-        newDish = new Dish(); // reset form
+        newDish = new Dish();
         selectedCategoryIds.Clear();
         dishes = await DishRepositoryAsync.ReadAllAsync();
         showCreateForm = false;

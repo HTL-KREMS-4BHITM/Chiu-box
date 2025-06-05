@@ -1,0 +1,54 @@
+﻿@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
+@inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
+@rendermode InteractiveServer
+
+<div class="card dish d-flex position-relative @((Dish.IsOutOfStock ? "opacity-75" : "")) p-3">
+    <div class="row w-100">
+        <div class="col-9">
+            <div class="row h-100 ps-2">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap align-items-center mb-2">
+                        <h1 class="h5 mb-0 me-2">@Dish.Name</h1>
+                        <p class="text-muted mb-0">(@Dish.Code)</p>
+                    </div>
+                </div>
+                <div class="col-12 description mb-2">
+                    <p class="mb-0">@Dish.Description</p>
+                </div>
+                <div class="col-12">
+                    <p class="price fw-bold">@Dish.Price.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                <button class="btn btn-outline-secondary" style="width: 2.5rem;" disabled="@Dish.IsOutOfStock">−</button>
+                <input type="text" value="1" min="1" class="form-control text-center"
+                       style="width: 3rem; height: 2.5rem;" />
+                <button class="btn btn-outline-primary" style="width: 2.5rem;" disabled="@Dish.IsOutOfStock">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-absolute end-0 bottom-0 p-2">
+        <div class="Allergene @(showTooltip ? "active" : "")" @onclick="ToggleTooltip">
+            <i class="bi bi-info-circle-fill info-icon"></i>
+            <span class="tooltiptext">Allergen</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Dish Dish { get; set; }
+    [Parameter] public AllergenDishesJT AllergenDishesJt { get; set; }
+
+    private bool showTooltip = false;
+
+    private void ToggleTooltip()
+    {
+        showTooltip = !showTooltip;
+    }
+}

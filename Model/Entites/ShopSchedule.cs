@@ -6,12 +6,12 @@ namespace Model.Entites;
 public class ShopSchedule
 {
     [Column("SCHEDULE_ID"), DatabaseGenerated(DatabaseGeneratedOption.Identity), Key]
-    public int Id { get; set; }
+    public int Schedule_Id { get; set; }
     [Column("DAY")]
-    public DayOfWeek Day { get; set; }
+    public string Day { get; set; }
     [Column("StartTime")]
-    public TimeSpan StartTime { get; set; }
+    public TimeOnly StartTime { get; set; }
     
     [Column("EndTime")]
-    public TimeSpan EndTime { get; set; }
+    public TimeOnly EndTime { get; set; }
 }
