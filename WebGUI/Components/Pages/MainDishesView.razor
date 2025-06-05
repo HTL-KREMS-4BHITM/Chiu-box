@@ -25,7 +25,7 @@
         
         @foreach (var category in Categories)
         {
-            <ShoppingCart @ref="cartRef" ItemCount="itemCount" />
+            <ShoppingCart @ref="cartRef"/>
             <a @onclick="() => UpdateDishes(category.CategoriesId)">
                 @category.Name
             </a>
@@ -53,7 +53,7 @@
 
 @code {
     private ShoppingCart? cartRef;
-    private int itemCount = 0;
+
     List<Dish> dishes = new();
     private List<Category> Categories { get; set; } = new();
     //private string UserName;
@@ -72,7 +72,14 @@
         dishes = await DishRepositoryAsync.ReadAsync(d => dishIds.Contains(d.DishId));
     }
 
-    
+    private async Task AddToCart(Dish dish)
+    {
+        if (cartRef != null)
+        {
+            await cartRef.AddItem(dish);
+        }
+        StateHasChanged(); 
+    }
     
     
     #region Filter
@@ -89,15 +96,7 @@
         }
         StateHasChanged();
     }
-    private async Task AddToCart(Dish dish)
-    {
-        if (cartRef != null)
-        {
-            await cartRef.AddItem(dish);
-            itemCount = cartRef.ItemCount;
-        }
-        StateHasChanged(); 
-    }
+ 
     
     
     
