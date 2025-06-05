@@ -59,6 +59,7 @@
     //private string UserName;
     //private List<User> CurrentUser = new(); 
 
+    //error
     protected override async Task OnInitializedAsync()
     {
         Categories = await CategoryRepository.ReadAsync(c => c.MainType == "H");
@@ -95,6 +96,7 @@
             await cartRef.AddItem(dish);
             itemCount = cartRef.ItemCount;
         }
+        StateHasChanged(); 
     }
     
     

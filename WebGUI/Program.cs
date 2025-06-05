@@ -64,6 +64,7 @@ builder.Services.AddSingleton<EmailService>();
 
 
 //
+builder.Services.AddSingleton<CartState>();
 builder.Services.AddScoped<ShoppingCart>();
 builder.Services.AddRazorComponents();
 builder.Services.AddServerSideBlazor();
