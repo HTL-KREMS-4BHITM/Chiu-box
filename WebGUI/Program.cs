@@ -59,6 +59,7 @@ builder.Services.AddTransient<IRepositoryAsync<CategoriesDishesJT>, CategoriesDi
 builder.Services.AddTransient<IRepositoryAsync<AllergenDishesJT>, AllergensDishesJTRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<Allergens>, AllergensRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<User>,UserRepoAsync>();
+builder.Services.AddTransient<IRepositoryAsync<ShopSchedule>,ScheduleRepoAsnyc>();
 
 builder.Services.AddSingleton<EmailService>();
 

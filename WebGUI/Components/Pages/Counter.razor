@@ -1,4 +1,7 @@
 ﻿@page "/counter"
+@using Domain.Repositories.Interfaces
+@using Model.Entites
+@inject IRepositoryAsync<ShopSchedule> Repo
 @rendermode InteractiveServer
 
 <PageTitle>Counter</PageTitle>
@@ -9,12 +12,24 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+@foreach (var i in shops)
+{
+    <h1>i.Day</h1>
+}
+
 @code {
     private int currentCount = 0;
+    private List<ShopSchedule> shops = new();
 
     private void IncrementCount()
     {
         currentCount++;
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        shops = await Repo.ReadAllAsync();
+    }
+
+}
 }

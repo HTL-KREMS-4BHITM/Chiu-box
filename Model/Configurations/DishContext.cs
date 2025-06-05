@@ -14,6 +14,7 @@ public class DishContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<ShopSchedule> ShopSchedule { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AllergenDishesJT>()
