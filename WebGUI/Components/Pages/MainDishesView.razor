@@ -20,13 +20,13 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Hauptspeisen</h4>
+        <ShoppingCart @ref="cartRef"/>
     </div>
-    <div class="d-flex justify-content-around">
+    <div class="categories d-flex row g-2">
         
         @foreach (var category in Categories)
         {
-            <ShoppingCart @ref="cartRef"/>
-            <a @onclick="() => UpdateDishes(category.CategoriesId)">
+            <a class="col-lg-1 col-6" @onclick="() => UpdateDishes(category.CategoriesId)">
                 @category.Name
             </a>
 
