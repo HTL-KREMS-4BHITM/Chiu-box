@@ -1,10 +1,14 @@
 ﻿@use "variables" as *;
 @use "colors" as *;
 
+
+
 .section-header {
   width: 100%;
   overflow-x: hidden;
 
+  
+  
   .navbar {
     background-color: $primary;
     padding: 0.5rem 0;
@@ -14,17 +18,27 @@
       padding-right: 15px;
       padding-left: 15px;
     }
-  }
+  
 
-  .navbar-brand {
-    * {
-      line-height: 1.2;
-      font: {
-        weight: 400;
-        style: normal;
-        size: 1.5rem;
+    .navbar-brand {
+      * {
+        line-height: 1.2;
+        font: {
+          weight: 400;
+          style: normal;
+          size: 1.5rem;
+        }
       }
     }
+    .navbar-toggler{
+      background-color: $secondary;
+      opacity: 0.5;
+      color: $dish_component_header;
+    }
+    .navbar-toggler-icon{
+      padding-top: 3px;
+    }
+ 
   }
 
   .navbar-nav {

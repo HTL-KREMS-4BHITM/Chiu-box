@@ -23,7 +23,7 @@
     {
         Dishes.Add(dish);
         CartState.AddToTotal(dish.Price);
-        NavigationManager.NavigateTo("/mainDishesView");
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
         ItemCount = Dishes.Count;
         await ProtectedSessionStore.SetAsync("Dishes", Dishes);
         NotifyStateChanged();

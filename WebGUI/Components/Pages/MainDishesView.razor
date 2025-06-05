@@ -15,13 +15,13 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Hauptspeisen</h4>
+        <ShoppingCart @ref="cartRef"/>
     </div>
-    <div class="d-flex justify-content-around">
+    <div class="categories d-flex row g-2">
         
         @foreach (var category in Categories)
         {
-            <ShoppingCart @ref="cartRef" ItemCount="itemCount" />
-            <a @onclick="() => UpdateDishes(category.CategoriesId)">
+            <a class="col-lg-1 col-6 text-center" @onclick="() => UpdateDishes(category.CategoriesId)">
                 @category.Name
             </a>
 
@@ -48,7 +48,7 @@
 
 @code {
     private ShoppingCart? cartRef;
-    private int itemCount = 0;
+
     List<Dish> dishes = new();
     private List<Category> Categories { get; set; } = new();
     //private string UserName;
@@ -67,7 +67,14 @@
         dishes = await DishRepositoryAsync.ReadAsync(d => dishIds.Contains(d.DishId));
     }
 
-    
+    private async Task AddToCart(Dish dish)
+    {
+        if (cartRef != null)
+        {
+            await cartRef.AddItem(dish);
+        }
+        StateHasChanged(); 
+    }
     
     
     #region Filter
@@ -84,15 +91,7 @@
         }
         StateHasChanged();
     }
-    private async Task AddToCart(Dish dish)
-    {
-        if (cartRef != null)
-        {
-            await cartRef.AddItem(dish);
-            itemCount = cartRef.ItemCount;
-        }
-        StateHasChanged(); 
-    }
+ 
     
     
     
