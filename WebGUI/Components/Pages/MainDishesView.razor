@@ -38,14 +38,35 @@
         
     <div class="row g-4">
         
-        @foreach (var dish in dishes)
+        @foreach (var dish in GetPagedBikes())
         {
             
             <div class="col-lg-4 col-md-4 col-sm-12">
                 <DishComponent OnAddToCart="() => AddToCart(dish)" Dish="dish"></DishComponent>
-             
             </div>
         }
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item @( _currentPage == 1 ? "disabled" : "" )">
+                    <button class="page-link" @onclick="PreviousPage">Prev</button>
+                </li>
+
+                @for (int i = 1; i <= _totalPages; i++)
+                {
+                    int pageNumber = i; 
+                    <li class="page-item @( _currentPage == pageNumber ? "active" : "" )">
+                        <button class="page-link" @onclick="() => GoToPage(pageNumber)">@pageNumber</button>
+                    </li>
+                }
+
+
+                <li class="page-item @( _currentPage == _totalPages ? "disabled" : "" )">
+                    <button class="page-link" @onclick="NextPage">Next</button>
+                </li>
+            </ul>
+        </nav>
+
     </div>
 </div>
 
@@ -53,9 +74,14 @@
 
 @code {
     private ShoppingCart? cartRef;
+    private Pagination? paginationRef;
 
     List<Dish> dishes = new();
+    List<Dish> dishesToLoad = new();
     private List<Category> Categories { get; set; } = new();
+    private int _pageSize = 20;
+    private int _totalPages;
+    private int _currentPage = 1;
     //private string UserName;
     //private List<User> CurrentUser = new(); 
 
@@ -70,8 +96,13 @@
         var dishIds = categoriesDishes.Select(cd => cd.DishId).Distinct().ToList();
 
         dishes = await DishRepositoryAsync.ReadAsync(d => dishIds.Contains(d.DishId));
+        Console.WriteLine("Dishes" + dishes.Count);
+        UpdateTotalPages();
+        dishesToLoad = GetPages();
+    
     }
 
+    #region ShoppingCart
     private async Task AddToCart(Dish dish)
     {
         if (cartRef != null)
@@ -80,6 +111,61 @@
         }
         StateHasChanged(); 
     }
+    #endregion
+    
+    
+    #region Pagination
+    private List<Dish> GetPages()
+    {
+     
+       
+        StateHasChanged();
+        return GetPagedBikes();
+
+    }
+    private void UpdateTotalPages()
+    {
+
+        _totalPages = (int)Math.Ceiling((double)dishes.Count / _pageSize);
+
+    }
+    public List<Dish> GetPagedBikes()
+    {
+        return dishes.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
+    }
+    private void NextPage()
+    {
+        if (_currentPage < _totalPages)
+        {
+            _currentPage++;
+            StateHasChanged();
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void GoToPage(int pageNumber)
+    {
+        if (pageNumber >= 1 && pageNumber <= _totalPages)
+        {
+            _currentPage = pageNumber;
+            InvokeAsync(() =>
+            {
+               
+                StateHasChanged();
+            });
+        }
+    }
+
+    #endregion
     
     
     #region Filter
@@ -96,9 +182,6 @@
         }
         StateHasChanged();
     }
- 
-    
-    
     
     
     #endregion
