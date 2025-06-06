@@ -46,26 +46,30 @@
             </div>
         }
         <!-- Pagination -->
-        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-            <ul class="pagination">
-                <li class="page-item @( _currentPage == 1 ? "disabled" : "" )">
-                    <button class="page-link" @onclick="PreviousPage">Prev</button>
-                </li>
-
-                @for (int i = 1; i <= _totalPages; i++)
-                {
-                    int pageNumber = i; 
-                    <li class="page-item @( _currentPage == pageNumber ? "active" : "" )">
-                        <button class="page-link" @onclick="() => GoToPage(pageNumber)">@pageNumber</button>
+        @if (_totalPages > 1)
+        {
+            
+            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                <ul class="pagination">
+                    <li class="page-item @( _currentPage == 1 ? "disabled" : "" )">
+                        <button class="page-link" @onclick="PreviousPage">Prev</button>
                     </li>
-                }
+
+                    @for (int i = 1; i <= _totalPages; i++)
+                    {
+                        int pageNumber = i; 
+                        <li class="page-item @( _currentPage == pageNumber ? "active" : "" )">
+                            <button class="page-link" @onclick="() => GoToPage(pageNumber)">@pageNumber</button>
+                        </li>
+                    }
 
 
-                <li class="page-item @( _currentPage == _totalPages ? "disabled" : "" )">
-                    <button class="page-link" @onclick="NextPage">Next</button>
-                </li>
-            </ul>
-        </nav>
+                    <li class="page-item @( _currentPage == _totalPages ? "disabled" : "" )">
+                        <button class="page-link" @onclick="NextPage">Next</button>
+                    </li>
+                </ul>
+            </nav>
+        }
 
     </div>
 </div>
@@ -77,7 +81,6 @@
     private Pagination? paginationRef;
 
     List<Dish> dishes = new();
-    List<Dish> dishesToLoad = new();
     private List<Category> Categories { get; set; } = new();
     private int _pageSize = 20;
     private int _totalPages;
@@ -96,10 +99,7 @@
         var dishIds = categoriesDishes.Select(cd => cd.DishId).Distinct().ToList();
 
         dishes = await DishRepositoryAsync.ReadAsync(d => dishIds.Contains(d.DishId));
-        Console.WriteLine("Dishes" + dishes.Count);
-        UpdateTotalPages();
-        dishesToLoad = GetPages();
-    
+        UpdateTotalPages(dishes);
     }
 
     #region ShoppingCart
@@ -123,10 +123,10 @@
         return GetPagedBikes();
 
     }
-    private void UpdateTotalPages()
+    private void UpdateTotalPages(List<Dish> dishList)
     {
 
-        _totalPages = (int)Math.Ceiling((double)dishes.Count / _pageSize);
+        _totalPages = (int)Math.Ceiling((double)dishList.Count / _pageSize);
 
     }
     public List<Dish> GetPagedBikes()
@@ -138,7 +138,6 @@
         if (_currentPage < _totalPages)
         {
             _currentPage++;
-            StateHasChanged();
             InvokeAsync(StateHasChanged);
         }
     }
@@ -180,6 +179,7 @@
         {
             dishes.Add(await DishRepositoryAsync.ReadAsync(cd.DishId));
         }
+        UpdateTotalPages(dishes);
         StateHasChanged();
     }
     
