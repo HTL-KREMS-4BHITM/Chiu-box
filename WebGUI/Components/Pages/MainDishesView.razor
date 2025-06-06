@@ -180,6 +180,7 @@
             dishes.Add(await DishRepositoryAsync.ReadAsync(cd.DishId));
         }
         UpdateTotalPages(dishes);
+        _currentPage = 1;
         StateHasChanged();
     }
     
