@@ -38,6 +38,8 @@ public class DishContext : DbContext
             .HasOne(j => j.Category)
             .WithMany()
             .HasForeignKey(j => j.CategoryId);
+        modelBuilder.Entity<DishesOrderJT>()
+            .HasKey(j => new { j.OrderId, j.DishId });
         
     }
 }

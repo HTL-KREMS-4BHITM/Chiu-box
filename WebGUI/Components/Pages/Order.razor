@@ -1,37 +1,79 @@
 ﻿@page "/order"
 @using Domain.Repositories.Interfaces
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.VisualBasic
 @using Model.Entites
 @using WebGUI.Components.Components
 @inject IRepositoryAsync<Dish> DishesRepositoryAsync 
+@inject ProtectedSessionStorage ProtectedSessionStore
+@rendermode InteractiveServer
+
 <div class="container mainDishesView">
     
     <div class="d-flex justify-content-center my-5">
-        <h4>Hauptspeisen</h4>
+        <h4>Warenkorb</h4>
     </div>
 
-        
-    <div class="row g-4">
-        
-        @foreach (var dish in _dishes)
-        {
-            
-            <div class="col-lg-4 col-md-4 col-sm-12">
-                <OrderComponent Dish="dish"></OrderComponent>
-             
-            </div>
-        }
-    </div>
+    @if (_dishes.Count == 0)
+    {
+        <p>Bis jetzt keine Speisen...</p>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var dish in _dishes)
+            {
+
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <OrderComponent Dish="dish"></OrderComponent>
+
+                </div>
+            }
+        </div>
+    }
 </div>
 
 
 @code {
     private List<Dish> _dishes = new();
     private Dish dish = new();
+    private List<Dish> actualDishes = new();
+    private List<KeyValuePair<int, int>> dishesToUse;
     
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _dishes = await DishesRepositoryAsync.ReadAllAsync();
-        dish = _dishes[0];
+     /*   base.OnAfterRenderAsync(firstRender);
+        var dishesResult = await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes");  
+        if (dishesResult.Success && dishesResult.Value != null)
+        {
+            _dishes = dishesResult.Value;
+            
+        }
+
+        actualDishes.Add(_dishes[0]);
+        _dishes.RemoveAt(0);
+        for (int i = 0; i < _dishes.Count; i++)
+        {
+            for (int j = 0; j < dishesToUse.Count; j++)
+            {
+                if (_dishes[i].DishId == dishesToUse[j].Key)
+                {
+                    dishesToUse[j] = new KeyValuePair<int, int>(_dishes[i].DishId, dishesToUse[j].Value + 1);
+                }
+            }
+            dishesToUse.Add(new KeyValuePair<int, int>(_dishes[i].DishId, 1));
+        }
+*/
+        // StateHasChanged();
     }
 
-}}
+    protected override async Task OnInitializedAsync()
+    {
+        /*_dishes = await DishesRepositoryAsync.ReadAllAsync();
+        dish = _dishes[0];*/
+      
+    }
+
+}

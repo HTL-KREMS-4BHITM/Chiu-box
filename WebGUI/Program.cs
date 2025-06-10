@@ -60,6 +60,7 @@ builder.Services.AddTransient<IRepositoryAsync<AllergenDishesJT>, AllergensDishe
 builder.Services.AddTransient<IRepositoryAsync<Allergens>, AllergensRepositoryAsync>();
 builder.Services.AddTransient<IRepositoryAsync<User>,UserRepoAsync>();
 builder.Services.AddTransient<IRepositoryAsync<ShopSchedule>,ScheduleRepoAsnyc>();
+builder.Services.AddTransient<IRepositoryAsync<DishesOrderJT>,DishesOrdersRepo>();
 
 builder.Services.AddSingleton<EmailService>();
 
