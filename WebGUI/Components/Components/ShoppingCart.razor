@@ -1,91 +1,68 @@
 ﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Model.Entites
-@inject ProtectedSessionStorage ProtectedSessionStorage
-@inject NavigationManager NavManager
+@inject NavigationManager NavigationManager
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject CartState CartState
+@rendermode InteractiveServer
 
-<h2>Hello @CurrentUser</h2>
-<p>Item Count: @ItemCount</p>
-<p>Dishes in Session: @(Dishes?.Count ?? 0)</p>
 
 @code {
     [Parameter]
     public int ItemCount { get; set; }
     public event Action? OnChange;
     public List<Dish> Dishes { get; set; } = new List<Dish>();
-    public bool IsAuthenticated { get; set; }
-    public string? CurrentUser { get; set; }
-    public string Username { get; set; } = "tom";
-    private bool _isInitialized;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender && !_isInitialized)
-        {
-            await LoadSessionData();
-            _isInitialized = true;
-            StateHasChanged();
-        }
+        base.OnInitializedAsync();
+        await LoadSessionData();
+    }
+    
+    
+    public async Task AddItem(Dish dish)
+    {
+        Dishes.Add(dish);
+        CartState.AddToTotal(dish.Price);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        ItemCount = Dishes.Count;
+        await ProtectedSessionStore.SetAsync("Dishes", Dishes);
+        NotifyStateChanged();
     }
 
     private async Task LoadSessionData()
     {
         try
         {
-            // Load dishes
-            var dishResult = await ProtectedSessionStorage.GetAsync<List<Dish>>("Dishes");
-            if (dishResult.Success && dishResult.Value != null)
+            var dishesResult = await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes");
+            if (dishesResult.Success && dishesResult.Value != null)
             {
-                Dishes = dishResult.Value;
+                Dishes = dishesResult.Value;
                 ItemCount = Dishes.Count;
+                NotifyStateChanged();
             }
-
-            // Load user session
-            var userResult = await ProtectedSessionStorage.GetAsync<string>("CurrentUser");
-            IsAuthenticated = userResult.Success;
-            CurrentUser = userResult.Value;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading session: {ex.Message}");
         }
     }
-
-    public async Task AddItem(Dish dish)
+    
+    //Todo Test this code
+    public async Task ClearSession()
     {
         try
         {
-            ItemCount++;
-            Dishes.Add(dish);
-            
-            // Save updated dishes list
-            await ProtectedSessionStorage.SetAsync("Dishes", Dishes);
-            
-            // Update user session if needed
-            if (!IsAuthenticated)
-            {
-                await ProtectedSessionStorage.SetAsync("CurrentUser", Username);
-                CurrentUser = Username;
-                IsAuthenticated = true;
-            }
+            if (!OperatingSystem.IsBrowser()) return;
 
+            await ProtectedSessionStore.DeleteAsync("Dishes");
+            Dishes.Clear();
+            ItemCount = 0;
             NotifyStateChanged();
-            StateHasChanged();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error adding item: {ex.Message}");
+            Console.WriteLine($"Error clearing session: {ex.Message}");
         }
-    }
-
-    public async Task ClearSession()
-    {
-        await ProtectedSessionStorage.DeleteAsync("Dishes");
-        await ProtectedSessionStorage.DeleteAsync("CurrentUser");
-        Dishes.Clear();
-        ItemCount = 0;
-        IsAuthenticated = false;
-        CurrentUser = null;
-        StateHasChanged();
     }
 
     private void NotifyStateChanged() => OnChange?.Invoke();

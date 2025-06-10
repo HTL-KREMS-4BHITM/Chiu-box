@@ -64,6 +64,7 @@ builder.Services.AddSingleton<EmailService>();
 
 
 //
+builder.Services.AddSingleton<CartState>();
 builder.Services.AddScoped<ShoppingCart>();
 builder.Services.AddRazorComponents();
 builder.Services.AddServerSideBlazor();
@@ -89,9 +90,9 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

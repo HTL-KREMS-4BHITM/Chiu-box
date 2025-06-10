@@ -1,7 +1,6 @@
 ﻿@page "/mainDishesView"
 @using System.Security.Claims
 @using Domain.Repositories.Interfaces
-@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Model.Entites
 @using WebGUI.Components.Components
 @inject IRepositoryAsync<Dish> DishRepositoryAsync
@@ -10,8 +9,10 @@
 @inject IRepositoryAsync<User> UserRepoAsync
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ShoppingCart ShoppingCart
 @rendermode InteractiveServer
+
+
+
 
 
 
@@ -19,15 +20,13 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Hauptspeisen</h4>
-
-        <ShoppingCart ItemCount="ShoppingCart.ItemCount" />
+        <ShoppingCart @ref="cartRef"/>
     </div>
-    <div class="d-flex justify-content-around">
-
+    <div class="categories d-flex row g-2">
+        
         @foreach (var category in Categories)
         {
-
-            <a @onclick="() => UpdateDishes(category.CategoriesId)">
+            <a class="col-lg-1 col-6 text-center" @onclick="() => UpdateDishes(category.CategoriesId)">
                 @category.Name
             </a>
 
@@ -39,57 +38,133 @@
         
     <div class="row g-4">
         
-        @foreach (var dish in dishes)
+        @foreach (var dish in GetPagedBikes())
         {
             
             <div class="col-lg-4 col-md-4 col-sm-12">
-                <DishComponent OnAddToCart="() => ShoppingCart.AddItem(dish)" Dish="dish"></DishComponent>
-             
+                <DishComponent OnAddToCart="() => AddToCart(dish)" Dish="dish"></DishComponent>
             </div>
         }
+        <!-- Pagination -->
+        @if (_totalPages > 1)
+        {
+            
+            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                <ul class="pagination">
+                    <li class="page-item @( _currentPage == 1 ? "disabled" : "" )">
+                        <button class="page-link" @onclick="PreviousPage">Prev</button>
+                    </li>
+
+                    @for (int i = 1; i <= _totalPages; i++)
+                    {
+                        int pageNumber = i; 
+                        <li class="page-item @( _currentPage == pageNumber ? "active" : "" )">
+                            <button class="page-link" @onclick="() => GoToPage(pageNumber)">@pageNumber</button>
+                        </li>
+                    }
+
+
+                    <li class="page-item @( _currentPage == _totalPages ? "disabled" : "" )">
+                        <button class="page-link" @onclick="NextPage">Next</button>
+                    </li>
+                </ul>
+            </nav>
+        }
+
     </div>
 </div>
 
 
 
 @code {
+    private ShoppingCart? cartRef;
+    private Pagination? paginationRef;
 
     List<Dish> dishes = new();
     private List<Category> Categories { get; set; } = new();
+    private int _pageSize = 20;
+    private int _totalPages;
+    private int _currentPage = 1;
     //private string UserName;
     //private List<User> CurrentUser = new(); 
 
+    //error
     protected override async Task OnInitializedAsync()
     {
-        dishes = await DishRepositoryAsync.ReadAllAsync();
         Categories = await CategoryRepository.ReadAsync(c => c.MainType == "H");
+        var categoryIds = Categories.Select(c => c.CategoriesId).ToList();
 
-        /*var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+        var categoriesDishes = await CategoriesDishesJTRepoAsync.ReadAsync(cd => categoryIds.Contains(cd.CategoryId));
 
-        if (user.Identity is not null && user.Identity.IsAuthenticated)
-        {
-            UserName = user.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
-            if (!string.IsNullOrEmpty(UserName))
-            {
-                CurrentUser = await UserRepoAsync.ReadAsync(u => u.Username == UserName);
-                if (CurrentUser.Count > 0)
-                {
-                    Console.WriteLine(CurrentUser[0].Username);
-                }
-                else
-                {
-                    Console.WriteLine("User not found in DB.");
-                }
-            }
-        }
-        else
-        {
-            Console.WriteLine("Not authenticated.");
-        }
-        */
+        var dishIds = categoriesDishes.Select(cd => cd.DishId).Distinct().ToList();
+
+        dishes = await DishRepositoryAsync.ReadAsync(d => dishIds.Contains(d.DishId));
+        UpdateTotalPages(dishes);
     }
+
+    #region ShoppingCart
+    private async Task AddToCart(Dish dish)
+    {
+        if (cartRef != null)
+        {
+            await cartRef.AddItem(dish);
+        }
+        StateHasChanged(); 
+    }
+    #endregion
     
+    
+    #region Pagination
+    private List<Dish> GetPages()
+    {
+     
+       
+        StateHasChanged();
+        return GetPagedBikes();
+
+    }
+    private void UpdateTotalPages(List<Dish> dishList)
+    {
+
+        _totalPages = (int)Math.Ceiling((double)dishList.Count / _pageSize);
+
+    }
+    public List<Dish> GetPagedBikes()
+    {
+        return dishes.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
+    }
+    private void NextPage()
+    {
+        if (_currentPage < _totalPages)
+        {
+            _currentPage++;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void GoToPage(int pageNumber)
+    {
+        if (pageNumber >= 1 && pageNumber <= _totalPages)
+        {
+            _currentPage = pageNumber;
+            InvokeAsync(() =>
+            {
+               
+                StateHasChanged();
+            });
+        }
+    }
+
+    #endregion
     
     
     #region Filter
@@ -104,11 +179,10 @@
         {
             dishes.Add(await DishRepositoryAsync.ReadAsync(cd.DishId));
         }
+        UpdateTotalPages(dishes);
+        _currentPage = 1;
         StateHasChanged();
     }
-    
-    
-    
     
     
     #endregion

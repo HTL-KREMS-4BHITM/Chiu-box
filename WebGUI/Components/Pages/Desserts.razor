@@ -1,4 +1,4 @@
-﻿@page "/starters"
+﻿@page "/desserts"
 @using System.Security.Claims
 @using Domain.Repositories.Interfaces
 @using Model.Entites
@@ -14,18 +14,18 @@
 <div class="container mainDishesView">
     
     <div class="d-flex justify-content-center my-5">
-        <h4>Vorspeisen</h4>
+        <h4>Desserts</h4>
         <ShoppingCart @ref="cartRef"/>
     </div>
-    <div class="d-flex justify-content-around">
-        @foreach (var category in Categories)
-        {
-            <a @onclick="()=>UpdateDishes(category.CategoriesId)">
-                @category.Name
-            </a>
-        }
-    </div>
-    <hr>
+    @* <div class="d-flex justify-content-around"> *@
+    @*     @foreach (var category in Categories) *@
+    @*     { *@
+    @*         <a @onclick="()=>UpdateDishes(category.CategoriesId)"> *@
+    @*             @category.Name *@
+    @*         </a> *@
+    @*     } *@
+    @* </div> *@
+    @* <hr> *@
     <div class="row g-4">
         @foreach (var dish in dishes)
         {
@@ -43,11 +43,10 @@
     private string UserName;
     private List<User> CurrentUser = new(); 
     private ShoppingCart? cartRef;
-
-
+    
     protected override async Task OnInitializedAsync()
     {
-        Categories = await CategoryRepository.ReadAsync(c => c.MainType == "V");
+        Categories = await CategoryRepository.ReadAsync(c => c.MainType == "D");
         var categoryIds = Categories.Select(c => c.CategoriesId).ToList();
 
         var categoriesDishes = await CategoriesDishesJTRepoAsync.ReadAsync(cd => categoryIds.Contains(cd.CategoryId));
@@ -56,15 +55,17 @@
 
         dishes = await DishRepositoryAsync.ReadAsync(d => dishIds.Contains(d.DishId));
     }
+
+    
     private async Task AddToCart(Dish dish)
     {
         if (cartRef != null)
         {
             await cartRef.AddItem(dish);
-
         }
         StateHasChanged(); 
     }
+    
     
     #region Filter
     
