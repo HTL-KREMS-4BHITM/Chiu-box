@@ -1,4 +1,8 @@
-﻿@inject CartState CartState
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Model.Entites
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject IShoppingCartService CartService
+@rendermode InteractiveServer
 @implements IDisposable
 
 <section class="section-header">
@@ -33,9 +37,10 @@
                     <li class="nav-item cart">
                         <a class="nav-link" href="/order">
                             <i class="bi bi-cart3"></i>
-                            @CartState.TotalPrice
+                            
                         </a>
                     </li>
+                    @_currentTotalPrice
                     @* <li class="nav-item"> *@
                     @*     <a class="nav-link" href=""> *@
                     @*         <i class="bi bi-person-circle"></i> *@
@@ -54,20 +59,27 @@
     
 
 @code {
-        
-    protected override void OnInitialized()
+    
+    private decimal _currentTotalPrice;
+    List<Dish> dishes = new List<Dish>();
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Subscribe to changes SAFELY
-        CartState.OnChange += async () => 
+        if (firstRender)
         {
-            await InvokeAsync(StateHasChanged);
-        };
+            CartService.OnCartUpdated += UpdateCart;
+            _currentTotalPrice = CartService.TotalPrice;
+
+            dishes = (await ProtectedSessionStore.GetAsync<List<Dish>>("userData")).Value ?? null;
+        }
     }
 
-    public void Dispose()
+    private void UpdateCart()
     {
-        // Unsubscribe to avoid memory leaks
-        CartState.OnChange -= StateHasChanged;
+        _currentTotalPrice = CartService.TotalPrice;
+        StateHasChanged();
     }
+
+    public void Dispose() => CartService.OnCartUpdated -= UpdateCart;
     
 }
