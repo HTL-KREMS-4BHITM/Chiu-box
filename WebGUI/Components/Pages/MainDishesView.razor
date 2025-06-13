@@ -33,7 +33,6 @@
         }
     </div>
     <hr>
-
     
         
     <div class="row g-4">
@@ -45,6 +44,12 @@
                 <DishComponent OnAddToCart="() => AddToCart(dish)" Dish="dish"></DishComponent>
             </div>
         }
+        <div class="mt-5 text-center text-muted">
+            <h5>Allergeneinformationen</h5>
+            <p>
+                A: Gluten, B: Krebstiere, C: Eier, D: Fisch, E: Erdnüsse, F: Soja, G: Milch (einschließlich Laktose), H: Schalenfrüchte,<br> L: Sellerie, M: Senf, N: Sesam, O: Schwefeldioxid und Sulfite, P: Lupinen und Weichtiere.
+            </p>
+        </div>
         <!-- Pagination -->
         @if (_totalPages > 1)
         {
@@ -78,7 +83,7 @@
 
 @code {
     private ShoppingCart? cartRef;
-    private Pagination? paginationRef;
+   // private Pagination? paginationRef;
 
     List<Dish> dishes = new();
     private List<Category> Categories { get; set; } = new();

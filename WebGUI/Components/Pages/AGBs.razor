@@ -1,72 +1,265 @@
 ﻿@page "/AGBs"
 
-  <div class="container my-5">
-    <h1 class="mb-4">Allgemeine Geschäftsbedingungen (AGB)</h1>
+<div class="container my-5">
+  <h1 class="mb-4">Allgemeine Geschäftsbedingungen (AGB)</h1>
 
-    <div class="accordion" id="agbAccordion">
+  <div class="accordion" id="agbAccordion">
 
-      <!-- Abschnitt 1 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="heading1">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true">
-            1. Geltungsbereich
-          </button>
-        </h2>
-        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#agbAccordion">
-          <div class="accordion-body">
-            <p>Diese AGB gelten für Lieferung und Abholung von Speisen und Getränken, gemäß dem bestellbaren Angebot, das der Kunde per Internet, Telefon oder persönlich bei der Jo-Han e.U. bestellt hat.</p>
-            <p>Liefergebiet: <a href="https://www.chiu-box.at/zustellung" target="_blank">www.chiu-box.at / Zustellung</a>.</p>
-            <p>Lieferungen außerhalb des Gebiets erfolgen nach Ermessen von CHIU-BOX / JO-HAN CHIU e.U.</p>
-          </div>
+    <!-- Abschnitt 1 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading1">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true">
+          1. Geltungsbereich
+        </button>
+      </h2>
+      <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Diese AGB gelten für Lieferung und Abholung von Speisen und Getränken, gemäß dem bestellbaren Angebot, das der Kunde per Internet, Telefon oder persönlich bei der Jo-Han e.U. bestellt hat.</p>
+          <p>Liefergebiet: <a href="https://www.chiu-box.at/zustellung" target="_blank">www.chiu-box.at / Zustellung</a>.</p>
+          <p>Lieferungen außerhalb des Gebiets erfolgen nach Ermessen von CHIU-BOX / JO-HAN CHIU e.U.</p>
         </div>
       </div>
+    </div>
 
-      <!-- Abschnitt 2 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="heading2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-            2. Bestellung
-          </button>
-        </h2>
-        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
-          <div class="accordion-body">
-            <h5>A</h5>
-            <p>Der Kunde bestellt die von ihm gewünschten Waren in handelsüblichen Mengen. Alle unsere Waren werden handwerklich gefertigt. Da es sich um Lebensmittel handelt, ist die Bestellung verbindlich und vom Umtausch ausgeschlossen. Bei darüber hinaus ausgehenden Mengen bedarf es einer gesonderten Absprache. Bestellungen werden Telefonisch, über das Online Shopsystem und in Ausnahmefällen auch per Sms entgegengenommen. </p>
+    <!-- Abschnitt 2 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading2">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+          2. Bestellung
+        </button>
+      </h2>
+      <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <h5>A</h5>
+          <p>Der Kunde bestellt die von ihm gewünschten Waren in handelsüblichen Mengen. Alle unsere Waren werden handwerklich gefertigt. Da es sich um Lebensmittel handelt, ist die Bestellung verbindlich und vom Umtausch ausgeschlossen. Bei darüber hinaus ausgehenden Mengen bedarf es einer gesonderten Absprache. Bestellungen werden Telefonisch, über das Online Shopsystem und in Ausnahmefällen auch per Sms entgegengenommen. </p>
 
-            <h5>B</h5>
-            <p>CHIU-BOX behält sich Ablehnung im Einzelfall vor, z.B. bei Lieferadressen außerhalb des Liefergebiets oder mehrfachen Bestellungen zur selben Zeit.</p>
+          <h5>B</h5>
+          <p>JO-HAN Chiu / CHIU-BOX e.U. behält sich vor, im Einzelfall eine Auslieferung abzulehnen. Dies ist insbesondere der Fall, wenn:</p>
+          <ul>
+            <li>die Lieferadresse außerhalb des Liefergebietes liegt,</li>
+            <li>ein Kunde bei einer vorhergehenden Auslieferung nicht angetroffen wurde,</li>
+            <li>eine Lastschrift des Kunden vorliegt,</li>
+            <li>oder in Ausnahmefällen mehrere Aufträge gleichzeitig zum selben Termin eingehen.</li>
+          </ul>
 
-            <h5>C – Bestellzeiten</h5>
-            <p><strong>Telefonisch:</strong> Täglich 10:00 – 21:50 Uhr</p>
-            <p><strong>Online:</strong> Mo–Fr & So: 10:00 – 21:00 Uhr | Sa: Keine Lieferung</p>
-            <p>Bestellungen außerhalb der Öffnungszeiten (inkl. Betriebsurlaub) sind nicht möglich. <a href="https://www.chiu-box.at/öffnungszeiten" target="_blank">Öffnungszeiten</a></p>
+          <h5>C – Bestellzeiten</h5>
+          <p><strong>Telefonische Bestellung:</strong></p>
+          <ul class="mb-2">
+            <li>Montag – Samstag: 10:00 – 21:50 Uhr</li>
+            <li>Sonntag: 10:00 – 21:50 Uhr</li>
+          </ul>
 
-            <h5>D</h5>
-            <p>Keine Garantie für rechtzeitige Lieferung bei Vorbestellungen.</p>
-          </div>
+          <p><strong>Online-Bestellung:</strong></p>
+          <ul class="mb-2">
+            <li>Montag – Freitag: 10:00 – 21:00 Uhr</li>
+            <li>Sonntag: 10:00 – 21:00 Uhr</li>
+            <li><strong>Samstag:</strong> Keine Lieferung möglich</li>
+          </ul>
+
+          <p>Bestellungen außerhalb der Öffnungszeiten sowie während des Betriebsurlaubs sind nicht möglich.</p>
+
+          <h5>D</h5>
+          <p>Für die rechtzeitige Lieferung bei vorbestellten Bestellungen kann keine Garantie übernommen werden.</p>
         </div>
       </div>
+    </div>
 
-      <!-- Weitere Abschnitte -->
-      <!-- Abschnitt 3 - 16: Gleiche Struktur wie oben, duplizieren und Inhalte einsetzen -->
-      <!-- Beispiel für einen weiteren Abschnitt -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="heading3">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
-            3. Vertragspartner
-          </button>
-        </h2>
-        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
-          <div class="accordion-body">
-            <p>Vertragspartner sind CHIU-BOX / JO-HAN CHIU e.U. und der Besteller.</p>
-          </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading3">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+          3. Vertragspartner
+        </button>
+      </h2>
+      <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Sind einerseits [CHIU-BOX / JO-HAN CHIU e.U.] und der Bestellende.</p>
         </div>
       </div>
-
-      <!-- Wiederhole für Abschnitte 4 bis 16 analog -->
-
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading4">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+          4. Datensicherheit
+        </button>
+      </h2>
+      <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Der Kunde stellt uns von sämtlichen Ansprüchen Dritter hinsichtlich der überlassenen Daten frei. Soweit Daten an uns (gleich in welcher Form) übermittelt werden, stellt der Kunde Sicherheitskopien her. Dem Kunden ist bekannt, dass für alle Teilnehmer im Übertragungswesen die Möglichkeit besteht, übermittelte Daten abzuhören. Der Kunde nimmt dies in Kauf und trägt bei der Übermittlung von nicht für die Öffentlichkeit bestimmten Daten selbst die Verantwortung.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading5">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+          5. Scherzbestellungen - und ihre Folgen
+        </button>
+      </h2>
+      <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Durch das Bestätigen des Bestellauftrages und der AGBs gibt der Kunde ein eindeutiges und verbindliches Auftragsangebot ab und ist für die Bezahlung der Waren bei Lieferung verantwortlich. Bei Falsch- bzw. Scherzbestellungen erstatten wir Anzeige und werden den entstandenen Schaden einfordern.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading6">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6">
+          6. Aktionsangebote
+        </button>
+      </h2>
+      <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Wir sind immer bemüht ausreichende Mengen an Aktionswaren vorrätig zu haben. Sollte trotzdem aufgrund der großen Nachfrage eine Ware nicht lieferbar sein, besteht kein Recht auf die Auslieferung. Dies gilt insbesondre für unser Onlineangebot und deren unter dem Link "Angebot" befindlichen Angebote</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading7">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7">
+          7. Gültigkeit
+        </button>
+      </h2>
+      <div id="collapse7" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Preisänderungen, die auf Preiserhöhungen seitens der Industrie bzw. fiskalischer Maßnahmen zurückzuführen sind, behalten wir uns vor. Dieses gilt auch für Waren, die mit Dauerniedrigpreisen deklariert wurden. Mit Erscheinen einer Neuauflage unserer Angebote unter dem Link "Angebote", verlieren alle vorangegangenen Angebote ihre Gültigkeit.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading8">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8">
+          8. Angebot und Vertragsabschluss
+        </button>
+      </h2>
+      <div id="collapse8" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Mit der Anerkennnung der Datenschutzbestimmungen, dieser AGB und dem Abschluss des Bestellvorganges kommt es zum Vertragsabschluss.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading9">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9">
+          9. Widerrufsrecht, Widerrufsbelehrung, Widerrufsfolgen 
+        </button>
+      </h2>
+      <div id="collapse9" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Ein Widerruf des Rechtsgeschäfts ist nicht möglich, da der Lieferant die Speise extra für den Besteller herstellt.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading10">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10">
+          10. Haftung, Schadensersatzansprüche
+        </button>
+      </h2>
+      <div id="collapse10" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <h5>A</h5>
+          <p>Wir garantieren eine hohe Verfügbarkeit unseres Services. Betriebszeiten können jedoch für Wartungsarbeiten verwendet werden. Die JO-HAN Chiu e.U. kann keine Gewähr und Haftung für Leistungsverzögerungen aufgrund hoher Gewalt und von Ereignissen, die der Jo-HAN Chiu e.U. die Leistung wesentlich erschweren oder unmöglich machen (hierzu gehören insbesondere Streik, Aussperrung, behördliche Anordnung, der Ausfall der Kommunikationsnetze und Gateways, Störungen im Bereich der Dienste der Telefonnetzbetreiber usw.), übernehmen. Die JO-HAN Chiu e.U. übernimmt keine Gewähr für die richtige Wiedergabe der Internetseiten, sowie keine Garantie für identische Darstellungen bei der Verwendung von unterschiedlicher Browsersoftware, es sei denn, es fällt der JO-HAN CHIU e.U. Vorsatz oder grobe Fahrlässigkeit zur Last. Für mittelbare Schäden und Folgeschäden haftet die JO-Han Chiu e.U. nur bei Vorsatz. Die Haftung sowie etwaige Schadensersatzansprüche sind maximal auf die Höhe des Auftragswertes begrenzt. Es können darüber hinaus keine weiteren Schadensersatzansprüche geltend gemacht werden. Eine weitergehende Haftung wird von der JO-HAN Chiu GmbH nicht übernommen. Dieselben Bedingungen gelten beim Einsatz unserer Webapplikationen. Jegliche Schadensersatzansprüche bzgl. Fehlfunktionen unserer Webapplikationen existieren nicht. Wenn der Kunde selbst Eingriffe am Quelltext der Internetseiten vornimmt, erlischt jeglicher Gewährleistungs- oder Haftungsanspruch. Für Ausfälle im Internet, z.B. Serverausfälle, die dazu führen, dass Internetseiten (auch vorübergehend) nicht aufgerufen werden können, kann die JO-HAN Chiu e.U. nicht haftbar gemacht werden</p>
+          <h5>B</h5>
+          <p>Eine etwaige Haftung der Warenlieferung aus der Anliefervereinbarung ist begrenzt auf den bestellten Warenwert, es sei denn, es liegt vorsätzliches bzw. grob fahrlässiges Verhalten vor. Am Ort der Entgegennahme der bestellten Waren durch den Kunden, in der Regel an seiner Haus- bzw. Wohnungstür, geht die Gefahr von Verlust, Beschädigung oder Verderb der Waren auf den Kunden über.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading11">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11">
+          11. Preise
+        </button>
+      </h2>
+      <div id="collapse11" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Sämtliche Preise verstehen sich inklusive der gesetzlichen Mehrwertsteuer, exklusive etwaiger Lieferkosten. Weiters gelten diese nur für gelieferte bzw. selbst abgholte Speisen. Für die Aktualität der Speisekarten(Printversion) hat der Kunde bzw. Besteller selbst Verantwortung zu tragen. Ältere Versionen der Speisekarten(Printversionen) verlieren automatisch mit der Einführung neuerer Versionen ihre Gültigkeit. Hinweise dazu finden sie unter dem Menüpunkt News.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading12">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12">
+          12. Lieferung
+        </button>
+      </h2>
+      <div id="collapse12" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Die Lieferung erfolgt zeitnah nach Eingang der Bestellung, innerhalb der auf der Seite ersichtlichen Lieferzeiten.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading13">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse13">
+          13. Jugendschutz
+        </button>
+      </h2>
+      <div id="collapse13" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <h5>A</h5>
+          <p>JO-HAN Chiu e.U. will nur Vertragsbeziehungen mit volljährigen Personen eingehen.(Ausnahme Taschengeldparagraph) Der Besteller ist verpflichtet, dafür Sorge zu tragen, dass nur er selbst oder von ihm zur Entgegennahme der Lieferung ermächtigte volljährige Personen die Warenlieferung entgegennehmen</p>
+          <h5>B</h5>
+          <p>Die Abgabe und die Zustellung von alkoholischen Getränken können nur an Personen über 18 Jahren erfolgen. Zur Einhaltung der gesetzlichen Vorschriften ist JO-HAN Chiu Gmbh berechtigt, Ware erst nach Legitimation durch einen amtlichen Lichtbildausweis zu übergeben. Im Fall der berechtigten Verweigerung der Übergabe ist der Kunde zum Ersatz des tatsächlich entstandenen Schadens verpflichtet(zB. Kosten der Zustellung).</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading14">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse14">
+          14. Zustellungen
+        </button>
+      </h2>
+      <div id="collapse14" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Der Kunde hat bei der Anlieferung die Produkte auf Vollständigkeit und Qualität zu überprüfen und Mängel in der Anwesenheit der zustellenden Person zu kommunizieren. Im Nachhinein getätigte Reklamationen können von der JO-HAN CHIU e.U. nicht berücksichtigt werden.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading15">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse15">
+          15. Zahlung
+        </button>
+      </h2>
+      <div id="collapse15" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <p>Die Bezahlung erfolgt bei Lieferung, bzw. bei Abholung der Bestellung, mittels Barzahlung.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading16">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse16">
+          16. Erfüllungsort, Gerichtsstand, sonstige Bestimmungen
+        </button>
+      </h2>
+      <div id="collapse16" class="accordion-collapse collapse" data-bs-parent="#agbAccordion">
+        <div class="accordion-body">
+          <h5>A</h5>
+          <p>Erfüllungsort und Gerichtsstand ist Krems an der Donau, soweit nicht ein anderer Gerichtsstand gesetzlich vorgeschrieben ist. Auf das Vertragsverhältnis findet das Recht der Bundesrepublik Österreich Anwendung.</p>
+          <h5>B</h5>
+          <p>Diese AGB können durch JO-HAN Chiu GmbH jederzeit geändert werden</p>
+          <h5>C</h5>
+          <p>Für verspätete Lieferung aufgrund, Verkehrsstörungen, Aussperrungen und Streiks sowie alle Fälle höherer Gewalt wird seitens JO-HAN Chiu e.U. keine Haftung übernommen.</p>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
 @code {
     
 }
