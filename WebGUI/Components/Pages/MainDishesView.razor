@@ -1,5 +1,4 @@
 ﻿@page "/mainDishesView"
-@using System.Security.Claims
 @using Domain.Repositories.Interfaces
 @using Model.Entites
 @using WebGUI.Components.Components
@@ -20,7 +19,7 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Hauptspeisen</h4>
-        <ShoppingCart @ref="cartRef"/>
+
     </div>
     <div class="categories d-flex row g-2">
         
@@ -42,7 +41,7 @@
         {
             
             <div class="col-lg-4 col-md-4 col-sm-12">
-                <DishComponent OnAddToCart="() => AddToCart(dish)" Dish="dish"></DishComponent>
+                <DishComponent Dish="dish"></DishComponent>
             </div>
         }
         <!-- Pagination -->
@@ -77,8 +76,6 @@
 
 
 @code {
-    private ShoppingCart? cartRef;
-    private Pagination? paginationRef;
 
     List<Dish> dishes = new();
     private List<Category> Categories { get; set; } = new();
@@ -102,16 +99,6 @@
         UpdateTotalPages(dishes);
     }
 
-    #region ShoppingCart
-    private async Task AddToCart(Dish dish)
-    {
-        if (cartRef != null)
-        {
-            await cartRef.AddItem(dish);
-        }
-        StateHasChanged(); 
-    }
-    #endregion
     
     
     #region Pagination
