@@ -7,17 +7,17 @@
     <div class="row flex-grow-1">
         <div class="col-9">
             <div class="row h-100 ps-3">
-                <div class="col-12 ">
+                <div class="col-12">
                     <div class="d-flex flex-row flex-wrap">
                         <h1>@Dish.Name </h1><p>(@Dish.Code)</p>
                     </div>
                 </div>
-                <div class="col-12  description">
+                <div class="col-12 description">
                     @Dish.Description
                 </div>
-                <div class="col-12 d-flex ">
+                <div class="col-12 d-flex">
                     <p class="price mt-auto">
-                        @Dish.Price
+                        @Dish.Price €
                     </p>
                 </div>
             </div>
@@ -27,10 +27,30 @@
                 <div class="col-12 d-flex justify-content-end pt-1 pe-3">
                     <button class="addBtn btn" @onclick="OnAddToCart" disabled="@Dish.IsOutOfStock">+</button>
                 </div>
-                <div class="col-12 d-flex justify-content-end pe-4 mt-auto">
-                    <div class="Allergene @(showTooltip ? "active" : "")" @onclick="ToggleTooltip">
+                <div class="col-12 d-flex justify-content-center mt-auto">
+                    <div class="Allergene" 
+                         @onclick="ToggleTooltip"
+                         @onmouseover="HandleHover"
+                         @onmouseout="HideTooltip">
                         <i class="bi bi-info-circle-fill info-icon"></i>
-                        <span class="tooltiptext">Allergen</span>
+                        <span class="tooltiptext @(showTooltip ? "visible" : "")">
+                            @if (isLoading)
+                            {
+                                <text>Laden...</text>
+                            }
+                            else if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                <text>@errorMessage</text>
+                            }
+                            else if (allergens.Any())
+                            {
+                                @string.Join(", ", allergens.Select(a => a.AllergenChar))
+                            }
+                            else
+                            {
+                                <text>Keine Allergene</text>
+                            }
+                        </span>
                     </div>
                 </div>
             </div>
@@ -40,14 +60,81 @@
 </div>
 
 @code {
-    [Parameter] public Dish Dish { get; set; } 
-    [Parameter] public AllergenDishesJT AllergenDishesJt { get; set; }
+    [Parameter] public Dish Dish { get; set; }
     [Parameter] public EventCallback OnAddToCart { get; set; }
     
     private bool showTooltip = false;
-    
-    private void ToggleTooltip()
+    private List<Allergens> allergens = new();
+    private bool isLoading = false;
+    private string errorMessage;
+    private System.Threading.CancellationTokenSource? hoverDelayCts;
+
+    private async Task LoadAllergensAsync()
     {
+        if (allergens.Count > 0 || isLoading) return;
+
+        isLoading = true;
+        errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var allergenJTs = await AllergensDishesJTRepositoryAsync.ReadAsync(jt => jt.DishId == Dish.DishId);
+            var allergenIds = allergenJTs.Select(jt => jt.AllergenId).ToList();
+
+            if (allergenIds.Any())
+            {
+                allergens = await AllergensRepositoryAsync.ReadAsync(a => allergenIds.Contains(a.AllergensId ?? 0));
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Fehler beim Laden der Allergene";
+            Console.WriteLine($"Fehler: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleHover()
+    {
+        // Abbrechen vorheriger Hover-Delay falls vorhanden
+        hoverDelayCts?.Cancel();
+        hoverDelayCts = new System.Threading.CancellationTokenSource();
+        
+        try
+        {
+            await Task.Delay(300, hoverDelayCts.Token); // Kurze Verzögerung für bessere UX
+            await LoadAllergensAsync();
+            showTooltip = true;
+            StateHasChanged();
+        }
+        catch (TaskCanceledException)
+        {
+            // Wurde abgebrochen, weil Maus weg bewegt wurde
+        }
+    }
+
+    private void HideTooltip()
+    {
+        hoverDelayCts?.Cancel();
+        showTooltip = false;
+        StateHasChanged();
+    }
+
+    private async Task ToggleTooltip()
+    {
+        await LoadAllergensAsync();
         showTooltip = !showTooltip;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        hoverDelayCts?.Cancel();
+        hoverDelayCts?.Dispose();
     }
 }

@@ -14,6 +14,9 @@ public class DishContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Allergens> Allergens { get; set; } // ✅ Hinzufügen!
+    public DbSet<AllergenDishesJT> AllergenDishesJT { get; set; } // ✅ Optional
+
     public DbSet<ShopSchedule> ShopSchedule { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

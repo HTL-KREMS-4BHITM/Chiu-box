@@ -8,7 +8,7 @@ public class Allergens
     [Column("ALLERGENS_ID"), MaxLength(25)]
     public int? AllergensId { get; set; }
     
-    [Column("ALLERGENTYPE"), MaxLength(25)]
+    [Column("ALLERGENSTYPE"), MaxLength(25)]
     public string? AllergenType { get; set; }
     
     [Column("ALLERGENCHAR"), MaxLength(25)]
