@@ -8,6 +8,4 @@ public class DishesOrderJT
     public int OrderId { get; set; }
     [Column("DISH_ID")]
     public int DishId { get; set; }
-    [Column("DISH_QUANTITY")]
-    public int DishQuantity { get; set; }
 }

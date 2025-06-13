@@ -1,79 +1,220 @@
 ﻿@page "/order"
 @using Domain.Repositories.Interfaces
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@using Microsoft.VisualBasic
 @using Model.Entites
 @using WebGUI.Components.Components
-@inject IRepositoryAsync<Dish> DishesRepositoryAsync 
 @inject ProtectedSessionStorage ProtectedSessionStore
 @rendermode InteractiveServer
 
 <div class="container mainDishesView">
-    
     <div class="d-flex justify-content-center my-5">
         <h4>Warenkorb</h4>
     </div>
 
-    @if (_dishes.Count == 0)
+    @if (dishQuantities.Count == 0)
     {
         <p>Bis jetzt keine Speisen...</p>
     }
     else
     {
+        <div class="d-flex justify-content-center">
+            <h5 class="mt-4 mb-4">Schritt 1: Speisen festlegen</h5>
+        </div>
         <div class="row g-4">
-
-            @foreach (var dish in _dishes)
+            @foreach (var dishEntry in dishQuantities)
             {
+                var dish = dishEntry.Key;
+                var quantity = dishEntry.Value;
 
                 <div class="col-lg-4 col-md-4 col-sm-12">
-                    <OrderComponent Dish="dish"></OrderComponent>
-
+                    <OrderComponent Dish="dish"
+                                    Quantity="quantity"
+                                    OnQuantityChanged="(q) => UpdateQuantity(dish, q)"
+                                    OnRemove="() => RemoveDish(dish)" />
                 </div>
             }
         </div>
+
+        <div class="d-flex justify-content-center">
+            <h5 class="mt-4 mb-4">Schritt 2: Speisen kontrollieren</h5>
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center rounded" style="background-color: #D3D3D3">
+                <table style="width: 40vw; border-collapse: collapse; font-size: 1.1rem;">
+                    @{
+                        total = 0;
+                    }
+                    @foreach (var dishEntry in dishQuantities)
+                    {
+                        var dish = dishEntry.Key;
+                        var quantity = dishEntry.Value;
+                        var price = dish.Price * quantity;
+                        total += price;
+
+                        <tr>
+                            <td style="width: 20%; padding: 8px;">@($"{quantity} x")</td>
+                            <td style="width: 60%; padding: 8px;">@dish.Name</td>
+                            <td style="width: 20%; padding: 8px; text-align: right;">@price.ToString("C")</td>
+                        </tr>
+                    }
+                    <tr style="font-weight: bold; border-top: 2px solid #333;">
+                        <td style="padding: 8px;">Total</td>
+                        <td></td>
+                        <td style="padding: 8px; text-align: right;">@total.ToString("C")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <h5 class="mt-4 mb-4">Schritt 3: Bestellart auswählen</h5>
+        </div>
+
+        <div class="d-flex justify-content-center mb-3">
+            <div class="form-check mx-2">
+                <input class="form-check-input" type="radio" id="eatIn" value="E" @onchange="() => SetOrderType('E')" checked="@((orderType == 'E'))" />
+                <label class="form-check-label" for="eatIn">Im Restaurant essen</label>
+            </div>
+            <div class="form-check mx-2">
+                <input class="form-check-input" type="radio" id="delivery" value="D" @onchange="() => SetOrderType('D')" checked="@((orderType == 'D'))" />
+                <label class="form-check-label" for="delivery">Liefern lassen</label>
+            </div>
+        </div>
+
+        <EditForm Model="@this" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="d-flex justify-content-center">
+                <div style="max-width: 500px; width: 100%;">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <InputText class="form-control" @bind-Value="customerName" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <InputText class="form-control" @bind-Value="email" type="email" required />
+                    </div>
+
+                    @if (orderType == 'D')
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Adresse</label>
+                            <InputText class="form-control" @bind-Value="address" required />
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">Zeit (mindestens 30 Minuten ab jetzt)</label>
+                        <input type="time" class="form-control"
+                               @bind="selectedTime"
+                               min="@MinDateTimeString" required />
+                        @if (!isValidTime)
+                        {
+                            <div class="text-danger">Bitte wählen Sie eine Zeit mindestens 30 Minuten ab jetzt.</div>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3 border-0" style="background-color: #457123">Bestellung abschicken</button>
+                </div>
+            </div>
+        </EditForm>
     }
 </div>
 
-
 @code {
-    private List<Dish> _dishes = new();
-    private Dish dish = new();
-    private List<Dish> actualDishes = new();
-    private List<KeyValuePair<int, int>> dishesToUse;
-    
+    private Dictionary<Dish, int> dishQuantities = new();
+    private char orderType = 'E';
+    private string customerName = string.Empty;
+    private string email = string.Empty;
+    private string address = string.Empty;
+    private DateTime selectedTime = DateTime.Now.AddMinutes(30);
+    private bool isValidTime = true;
+    private decimal total;
+
+    private string MinDateTimeString => DateTime.Now.AddMinutes(30).ToString("yyyy-MM-ddTHH:mm");
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-     /*   base.OnAfterRenderAsync(firstRender);
-        var dishesResult = await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes");  
-        if (dishesResult.Success && dishesResult.Value != null)
+        if (firstRender)
         {
-            _dishes = dishesResult.Value;
-            
-        }
+            var result = await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes");
 
-        actualDishes.Add(_dishes[0]);
-        _dishes.RemoveAt(0);
-        for (int i = 0; i < _dishes.Count; i++)
-        {
-            for (int j = 0; j < dishesToUse.Count; j++)
+            if (result.Success && result.Value != null)
             {
-                if (_dishes[i].DishId == dishesToUse[j].Key)
+                foreach (var dish in result.Value)
                 {
-                    dishesToUse[j] = new KeyValuePair<int, int>(_dishes[i].DishId, dishesToUse[j].Value + 1);
+                    var existing = dishQuantities.Keys.FirstOrDefault(d => d.DishId == dish.DishId);
+                    if (existing != null)
+                    {
+                        dishQuantities[existing]++;
+                    }
+                    else
+                    {
+                        dishQuantities[dish] = 1;
+                    }
                 }
+
+                await UpdateSession();
             }
-            dishesToUse.Add(new KeyValuePair<int, int>(_dishes[i].DishId, 1));
+
+            StateHasChanged();
         }
-*/
-        // StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
+    private async Task UpdateQuantity(Dish dish, int quantity)
     {
-        /*_dishes = await DishesRepositoryAsync.ReadAllAsync();
-        dish = _dishes[0];*/
-      
+        if (dishQuantities.ContainsKey(dish))
+        {
+            if (quantity <= 0)
+            {
+                dishQuantities.Remove(dish);
+            }
+            else
+            {
+                dishQuantities[dish] = quantity;
+            }
+
+            await UpdateSession();
+        }
     }
 
+    private async Task RemoveDish(Dish dish)
+    {
+        if (dishQuantities.ContainsKey(dish))
+        {
+            dishQuantities.Remove(dish);
+            await UpdateSession();
+        }
+    }
+
+    private async Task UpdateSession()
+    {
+        var dishList = dishQuantities.SelectMany(kvp => Enumerable.Repeat(kvp.Key, kvp.Value)).ToList();
+        await ProtectedSessionStore.SetAsync("Dishes", dishList);
+    }
+
+    private void SetOrderType(char type)
+    {
+        orderType = type;
+        selectedTime = DateTime.Now.AddMinutes(30);
+    }
+
+    private void HandleSubmit()
+    {
+        isValidTime = selectedTime >= DateTime.Now.AddMinutes(30);
+        if (!isValidTime)
+        {
+            return;
+        }
+
+        // Example debug output
+        Console.WriteLine($"Order Type: {orderType}");
+        Console.WriteLine($"Name: {customerName}");
+        Console.WriteLine($"Email: {email}");
+        Console.WriteLine($"Address: {address}");
+        Console.WriteLine($"Time: {selectedTime}");
+        Console.WriteLine($"Total: {total.ToString("C")}");
+    }
 }

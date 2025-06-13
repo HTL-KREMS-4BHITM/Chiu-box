@@ -1,10 +1,6 @@
-﻿@using Domain.Repositories.Interfaces
-@using Model.Entites
-@inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
-@inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
-@rendermode InteractiveServer
+﻿@using Model.Entites
 
-<div class="card dish d-flex position-relative @((Dish.IsOutOfStock ? "opacity-75" : "")) p-3 pe-0" style="">
+<div class="card dish d-flex position-relative p-3 pe-0">
     <div class="row w-100">
         <div class="col-9 d-flex flex-column h-100">
             <div class="ps-2">
@@ -12,7 +8,6 @@
                     <h1 class="h6 mb-0 me-2">@Dish.Name</h1>
                 </div>
             </div>
-
             <div class="mt-auto d-flex justify-content-start align-items-center ps-2">
                 <p class="price fw-bold mb-0">@Dish.Price.ToString("C")</p>
             </div>
@@ -20,10 +15,19 @@
 
         <div class="col-3 d-flex align-items-end justify-content-end pe-3">
             <div class="d-flex justify-content-between align-items-center bg-light rounded-pill px-3 py-1 shadow-sm">
-                <button class="btn btn-link p-0 m-0" @onclick="Remove" style="color: #113; font-size: 1.2rem;">
-                    <i class="bi bi-trash"></i>
+                <button class="btn btn-link p-0 m-0"
+                        @onclick="Decrease"
+                        style="color: #113; font-size: 1.2rem;">
+                    @if (Quantity != 1)
+                    {
+                        <i class="bi bi-dash"></i>
+                    }
+                    else
+                    {
+                        <i class="bi bi-trash"></i>
+                    }
                 </button>
-                <span class="mx-2">@quantity</span>
+                <span class="mx-2">@Quantity</span>
                 <button class="btn btn-link p-0 m-0" @onclick="Increase" style="color: #113; font-size: 1.2rem;">
                     <i class="bi bi-plus"></i>
                 </button>
@@ -34,21 +38,24 @@
 
 @code {
     [Parameter] public Dish Dish { get; set; }
+    [Parameter] public int Quantity { get; set; }
+    [Parameter] public EventCallback<int> OnQuantityChanged { get; set; }
     [Parameter] public EventCallback OnRemove { get; set; }
-    private List<Dish> Dishes = new();
 
-    private int quantity = 1;
-   
-
-    private void Increase()
+    private async Task Increase()
     {
-        quantity++;
-        Console.WriteLine("pushed me bisch");
+        await OnQuantityChanged.InvokeAsync(Quantity + 1);
     }
 
-    private void Remove()
+    private async Task Decrease()
     {
-        // Beispiel: Callback zum Entfernen aus dem Warenkorb oder Liste
-        OnRemove.InvokeAsync();
+        if (Quantity <= 1)
+        {
+            await OnRemove.InvokeAsync();
+        }
+        else
+        {
+            await OnQuantityChanged.InvokeAsync(Quantity - 1);
+        }
     }
 }
