@@ -4,6 +4,7 @@
 @using Model.Entites
 @using WebGUI.Components.Components
 @inject ProtectedSessionStorage ProtectedSessionStore
+@inject EmailService EmailService
 @rendermode InteractiveServer
 
 <div class="container mainDishesView">
@@ -81,6 +82,13 @@
             </div>
         </div>
 
+        @if (!string.IsNullOrWhiteSpace(Status))
+        {
+            <div class="text-center mt-2">
+                <small class="@AlertClass">@Status</small>
+            </div>
+        }
+
         <EditForm Model="@this" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -100,23 +108,55 @@
                     @if (orderType == 'D')
                     {
                         <div class="mb-3">
-                            <label class="form-label">Adresse</label>
-                            <InputText class="form-control" @bind-Value="address" required />
+                            <label class="form-label">Straße</label>
+                            <InputText class="form-control" @bind-Value="street" required />
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">Hausnummer</label>
+                                <InputText class="form-control" @bind-Value="houseNumber" required />
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Stiege (optional)</label>
+                                <InputText class="form-control" @bind-Value="staircase" />
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label class="form-label">PLZ</label>
+                                <InputText class="form-control" @bind-Value="zipCode" required />
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Ort</label>
+                                <InputText class="form-control" @bind-Value="city" required />
+                            </div>
                         </div>
                     }
 
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Telefonnummer</label>
+                        <InputText class="form-control"
+                                   type="tel"
+                                   @bind-Value="customerNumber"
+                                   pattern="^[0-9+\s\-]{6,20}$"
+                                   title="Bitte eine gültige Telefonnummer eingeben (z. B. +43 123 456789)"
+                                   required />
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Zeit (mindestens 30 Minuten ab jetzt)</label>
-                        <input type="time" class="form-control"
-                               @bind="selectedTime"
-                               min="@MinDateTimeString" required />
+                        <input type="time" class="form-control" @bind="selectedTime" required />
                         @if (!isValidTime)
                         {
-                            <div class="text-danger">Bitte wählen Sie eine Zeit mindestens 30 Minuten ab jetzt.</div>
+                            <small class="text-danger d-block mt-1">Bitte wählen Sie eine Zeit mindestens 30 Minuten ab jetzt.</small>
                         }
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-3 border-0" style="background-color: #457123">Bestellung abschicken</button>
+                    <button type="submit" class="btn btn-primary mt-3 border-0" style="background-color: #457123">
+                        Bestellung abschicken
+                    </button>
                 </div>
             </div>
         </EditForm>
@@ -128,37 +168,36 @@
     private char orderType = 'E';
     private string customerName = string.Empty;
     private string email = string.Empty;
-    private string address = string.Empty;
-    private DateTime selectedTime = DateTime.Now.AddMinutes(30);
+    private string street = string.Empty;
+    private string houseNumber = string.Empty;
+    private string staircase = string.Empty;
+    private string zipCode = string.Empty;
+    private string city = string.Empty;
+    private string customerNumber;
+    private TimeOnly selectedTime = TimeOnly.FromDateTime(DateTime.Now.AddMinutes(30));
     private bool isValidTime = true;
     private decimal total;
-
-    private string MinDateTimeString => DateTime.Now.AddMinutes(30).ToString("yyyy-MM-ddTHH:mm");
+    private string Status;
+    private string AlertClass = "text-success";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var result = await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes");
-
             if (result.Success && result.Value != null)
             {
                 foreach (var dish in result.Value)
                 {
                     var existing = dishQuantities.Keys.FirstOrDefault(d => d.DishId == dish.DishId);
                     if (existing != null)
-                    {
                         dishQuantities[existing]++;
-                    }
                     else
-                    {
                         dishQuantities[dish] = 1;
-                    }
                 }
 
                 await UpdateSession();
             }
-
             StateHasChanged();
         }
     }
@@ -168,13 +207,9 @@
         if (dishQuantities.ContainsKey(dish))
         {
             if (quantity <= 0)
-            {
                 dishQuantities.Remove(dish);
-            }
             else
-            {
                 dishQuantities[dish] = quantity;
-            }
 
             await UpdateSession();
         }
@@ -198,23 +233,37 @@
     private void SetOrderType(char type)
     {
         orderType = type;
-        selectedTime = DateTime.Now.AddMinutes(30);
+        selectedTime = TimeOnly.FromDateTime(DateTime.Now.AddMinutes(30));
     }
 
-    private void HandleSubmit()
+    private async Task HandleSubmit()
     {
-        isValidTime = selectedTime >= DateTime.Now.AddMinutes(30);
+        var now = DateTime.Now;
+        var selectedDateTime = new DateTime(now.Year, now.Month, now.Day,
+                                            selectedTime.Hour, selectedTime.Minute, 0);
+        isValidTime = selectedDateTime >= now.AddMinutes(30);
+
         if (!isValidTime)
         {
+            Status = "Die gewählte Uhrzeit muss mindestens 30 Minuten in der Zukunft liegen.";
+            AlertClass = "text-danger";
             return;
         }
 
-        // Example debug output
-        Console.WriteLine($"Order Type: {orderType}");
-        Console.WriteLine($"Name: {customerName}");
-        Console.WriteLine($"Email: {email}");
-        Console.WriteLine($"Address: {address}");
-        Console.WriteLine($"Time: {selectedTime}");
-        Console.WriteLine($"Total: {total.ToString("C")}");
+        string fullAddress = orderType == 'D'
+            ? $"{street} {houseNumber}, {(string.IsNullOrWhiteSpace(staircase) ? "" : $"Stiege {staircase}, ")}{zipCode} {city}"
+            : "";
+
+        try
+        {
+            await EmailService.SendOrderConfirmation(customerName, fullAddress, email, customerNumber, dishQuantities, total, orderType, selectedTime);
+            Status = "Bestellung erfolgreich versendet!";
+            AlertClass = "text-success";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim Senden der E-Mail: {ex.Message}";
+            AlertClass = "text-danger";
+        }
     }
 }

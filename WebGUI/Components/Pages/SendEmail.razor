@@ -13,7 +13,7 @@
     <input @bind="RestaurantAddress" class="input" placeholder="Restaurant Address" />
     
 
-    <button class="btn btn-primary mt-4" @onclick="Send">Send Confirmation</button>
+    @* <button class="btn btn-primary mt-4" @onclick="Send">Send Confirmation</button> *@
 
     @if (!string.IsNullOrWhiteSpace(Status))
     {
@@ -37,16 +37,16 @@
         }
     }
 
-    private async Task Send()
-    {
-        try
-        {
-            await EmailService.SendOrderConfirmation(CustomerEmail, RestaurantName, RestaurantAddress, OrderItems);
-            Status = "✅ Email sent successfully!";
-        }
-        catch (Exception ex)
-        {
-            Status = $"❌ Failed: {ex.Message}";
-        }
-    }
+    // private async Task Send()
+    // {
+    //     try
+    //     {
+    //         await EmailService.SendOrderConfirmation(CustomerEmail, RestaurantName, RestaurantAddress, OrderItems);
+    //         Status = "✅ Email sent successfully!";
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Status = $"❌ Failed: {ex.Message}";
+    //     }
+    // }
 }

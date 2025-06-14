@@ -3,6 +3,7 @@
 @using Model.Entites
 @inject IRepositoryAsync<Dish> DishRepositoryAsync
 @inject IRepositoryAsync<CategoriesDishesJT> CategoryDishesJTRepositoryAsync
+@inject IRepositoryAsync<Category> CategoryAsync
 @inject IRepositoryAsync<ShopSchedule> ScheduleRepoAsync
 @rendermode InteractiveServer
 
@@ -26,10 +27,45 @@
     <h3 class="d-flex justify-content-center mb-4">Management</h3>
 
     <div class="mb-4">
-        <button class="btn btn-success" @onclick="ToggleCreateForm">
+        <button class="btn btn-success me-2" @onclick="ToggleCreateForm">
             @(showCreateForm ? "Hide" : "New Dish")
         </button>
+        <button class="btn btn-primary" @onclick="ToggleCategoryForm">
+            @(showCategoryForm ? "Hide" : "New Category")
+        </button>
     </div>
+
+    @if (showCategoryForm)
+    {
+        <div class="card mb-4">
+            <div class="card-header">Create New Category</div>
+            <div class="card-body">
+                <EditForm Model="@newCategory" OnValidSubmit="CreateCategory">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label">Category Name</label>
+                        <InputText class="form-control" @bind-Value="newCategory.Name" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Kategorieart</label>
+                        <InputSelect class="form-select" @bind-Value="newCategory.MainType">
+                            <option value="">-- bitte wählen --</option>
+                            <option value="H">Hauptspeise</option>
+                            <option value="V">Vorspeise</option>
+                            <option value="B">Beilage</option>
+                            <option value="D">Dessert</option>
+                        </InputSelect>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Add Category</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
 
     @if (showCreateForm)
     {
@@ -153,6 +189,8 @@
                                         </div>
                                     </td>
                                 </tr>
+                                
+
                             }
                         }
                     </tbody>
@@ -225,6 +263,8 @@
     private Dish newDish = new();
     private bool showCreateForm = false;
     private List<ShopSchedule> scheduled = new();
+    private List<int> editingCategoryIds = new();
+
 
     private List<int> selectedCategoryIds = new();
     private List<(int Id, string Name)> categoryOptions = new()
@@ -244,13 +284,38 @@
         (13, "Desserts"),
         (14, "Beilagen")
     };
+    private bool showCategoryForm = false;
+    private Category newCategory = new();
+    private List<Category> allCategories = new();
 
     protected override async Task OnInitializedAsync()
     {
         dishes = await DishRepositoryAsync.ReadAllAsync();
         scheduled = await ScheduleRepoAsync.ReadAllAsync();
-        Console.WriteLine(scheduled.Count);
+        allCategories = await CategoryAsync.ReadAllAsync();
+
+        categoryOptions = allCategories.Select(c => (c.CategoriesId, c.Name)).ToList();
     }
+
+
+    private void ToggleCategoryForm()
+    {
+        showCategoryForm = !showCategoryForm;
+    }
+
+    private async Task CreateCategory()
+    {
+        await CategoryAsync.CreateAsync(newCategory);
+        newCategory = new Category();
+        showCategoryForm = false;
+    }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     dishes = await DishRepositoryAsync.ReadAllAsync();
+    //     scheduled = await ScheduleRepoAsync.ReadAllAsync();
+    //     Console.WriteLine(scheduled.Count);
+    // }
 
     private void ToggleCreateForm()
     {
@@ -288,7 +353,7 @@
         showCreateForm = false;
     }
 
-    private void EditDish(Dish dish)
+    private async void EditDish(Dish dish)
     {
         if (selectedDish != null && selectedDish.DishId == dish.DishId)
         {
@@ -304,15 +369,42 @@
                 Price = dish.Price,
                 Code = dish.Code
             };
+
+            // Lade zugehörige Kategorien
+            var allLinks = await CategoryDishesJTRepositoryAsync.ReadAllAsync();
+            editingCategoryIds = allLinks
+                .Where(jt => jt.DishId == dish.DishId)
+                .Select(jt => jt.CategoryId)
+                .ToList();
         }
     }
+
 
     private async Task SaveDish()
     {
         await DishRepositoryAsync.UpdateAsync(selectedDish);
+
+        var allLinks = await CategoryDishesJTRepositoryAsync.ReadAllAsync();
+        var toDelete = allLinks.Where(jt => jt.DishId == selectedDish.DishId);
+        foreach (var jt in toDelete)
+        {
+            await CategoryDishesJTRepositoryAsync.DeleteAsync(jt.DishId);
+        }
+
+        foreach (var catId in editingCategoryIds)
+        {
+            await CategoryDishesJTRepositoryAsync.CreateAsync(new CategoriesDishesJT
+            {
+                DishId = selectedDish.DishId,
+                CategoryId = catId
+            });
+        }
+
         selectedDish = null;
+        editingCategoryIds.Clear();
         dishes = await DishRepositoryAsync.ReadAllAsync();
     }
+
 
     private void CancelEdit()
     {
@@ -348,4 +440,16 @@
             dish.IsSelected = anyUnchecked;
         }
     }
+    private void ToggleEditCategory(int categoryId)
+    {
+        if (editingCategoryIds.Contains(categoryId))
+        {
+            editingCategoryIds.Remove(categoryId);
+        }
+        else
+        {
+            editingCategoryIds.Add(categoryId);
+        }
+    }
+
 }
