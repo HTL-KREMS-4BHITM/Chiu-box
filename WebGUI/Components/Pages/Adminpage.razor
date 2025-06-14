@@ -183,8 +183,32 @@
                                                     <label class="form-label">Price</label>
                                                     <InputNumber class="form-control" @bind-Value="selectedDish.Price" />
                                                 </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Kategorien</label>
+                                                    <div class="row">
+                                                        @foreach (var group in categoryOptions.Chunk(3))
+                                                        {
+                                                            <div class="col-md-4">
+                                                                @foreach (var category in group)
+                                                                {
+                                                                    <div class="form-check" style="margin-bottom: 0.3rem;">
+                                                                        <input type="checkbox"
+                                                                               class="form-check-input"
+                                                                               id="edit_cat_@category.Id"
+                                                                               checked="@editingCategoryIds.Contains(category.Id)"
+                                                                               @onchange="@(() => ToggleEditCategory(category.Id))" />
+                                                                        <label class="form-check-label" for="edit_cat_@category.Id">@category.Name</label>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+
                                                 <button type="submit" class="btn btn-success">Save</button>
                                                 <button type="button" class="btn btn-secondary ms-2" @onclick="CancelEdit">Cancel</button>
+
                                             </EditForm>
                                         </div>
                                     </td>
@@ -353,7 +377,7 @@
         showCreateForm = false;
     }
 
-    private async void EditDish(Dish dish)
+    private async Task EditDish(Dish dish)
     {
         if (selectedDish != null && selectedDish.DishId == dish.DishId)
         {
@@ -370,7 +394,6 @@
                 Code = dish.Code
             };
 
-            // Lade zugehörige Kategorien
             var allLinks = await CategoryDishesJTRepositoryAsync.ReadAllAsync();
             editingCategoryIds = allLinks
                 .Where(jt => jt.DishId == dish.DishId)
@@ -385,13 +408,24 @@
         await DishRepositoryAsync.UpdateAsync(selectedDish);
 
         var allLinks = await CategoryDishesJTRepositoryAsync.ReadAllAsync();
-        var toDelete = allLinks.Where(jt => jt.DishId == selectedDish.DishId);
-        foreach (var jt in toDelete)
+        var existingLinks = allLinks
+            .Where(jt => jt.DishId == selectedDish.DishId)
+            .Select(jt => jt.CategoryId)
+            .ToList();
+
+        var toAdd = editingCategoryIds.Except(existingLinks);
+        var toRemove = existingLinks.Except(editingCategoryIds);
+
+        foreach (var catId in toRemove)
         {
-            await CategoryDishesJTRepositoryAsync.DeleteAsync(jt.DishId);
+            await CategoryDishesJTRepositoryAsync.DeleteAsync(new CategoriesDishesJT
+            {
+                DishId = selectedDish.DishId,
+                CategoryId = catId
+            });
         }
 
-        foreach (var catId in editingCategoryIds)
+        foreach (var catId in toAdd)
         {
             await CategoryDishesJTRepositoryAsync.CreateAsync(new CategoriesDishesJT
             {
@@ -404,6 +438,7 @@
         editingCategoryIds.Clear();
         dishes = await DishRepositoryAsync.ReadAllAsync();
     }
+
 
 
     private void CancelEdit()
@@ -433,7 +468,7 @@
     }
 
     private void ToggleAll()
-    {
+    {      
         bool anyUnchecked = dishes.Any(d => !d.IsSelected);
         foreach (var dish in dishes)
         {

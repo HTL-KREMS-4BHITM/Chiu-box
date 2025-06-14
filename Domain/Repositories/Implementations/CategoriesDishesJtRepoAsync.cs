@@ -8,4 +8,6 @@ public class CategoriesDishesJtRepoAsync : ARepositoryAsync<CategoriesDishesJT>
     public CategoriesDishesJtRepoAsync(DishContext context) : base(context)
     {
     }
+    
+
 }
