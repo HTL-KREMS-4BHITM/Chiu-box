@@ -101,20 +101,20 @@
 
     private async Task HandleHover()
     {
-        // Abbrechen vorheriger Hover-Delay falls vorhanden
+        
         hoverDelayCts?.Cancel();
         hoverDelayCts = new System.Threading.CancellationTokenSource();
         
         try
         {
-            await Task.Delay(300, hoverDelayCts.Token); // Kurze Verzögerung für bessere UX
+             
             await LoadAllergensAsync();
             showTooltip = true;
             StateHasChanged();
         }
         catch (TaskCanceledException)
         {
-            // Wurde abgebrochen, weil Maus weg bewegt wurde
+            
         }
     }
 
