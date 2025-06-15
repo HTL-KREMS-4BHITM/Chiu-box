@@ -271,11 +271,21 @@
                     }
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-center">
-                    <button class="btn btn-primary btn-success col-3 me-2">Start</button>
-                    <button class="btn btn-primary btn-danger col-3 me-2" >Stop</button>
-                    <button class="btn btn-primary btn-primary col-3">Save</button>
+                <div class="text-center mb-2">
+                    <span class="badge @GetStatusBadgeClass()">
+                        Shop Status: @shopStatus
+                    </span>
                 </div>
+
+
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-success col-3 me-2" @onclick="StartShop">Start</button>
+                    <button class="btn btn-danger col-3 me-2" @onclick="StopShop">Stop</button>
+                    <button class="btn btn-warning col-3 me-2" @onclick="ResetControlTimer">Reset</button>
+                    <button class="btn btn-primary col-3" @onclick="SaveSchedule">Save</button>
+                </div>
+
+
             </div>
         </div>
     }
@@ -288,6 +298,8 @@
     private bool showCreateForm = false;
     private List<ShopSchedule> scheduled = new();
     private List<int> editingCategoryIds = new();
+    private bool isShopRunning;
+    private string shopStatus = string.Empty;
 
 
     private List<int> selectedCategoryIds = new();
@@ -316,10 +328,26 @@
     {
         dishes = await DishRepositoryAsync.ReadAllAsync();
         scheduled = await ScheduleRepoAsync.ReadAllAsync();
-        allCategories = await CategoryAsync.ReadAllAsync();
 
+        var controlEntry = scheduled.FirstOrDefault(s => s.Day == "Current");
+        if (controlEntry == null)
+        {
+            var dummy = new ShopSchedule
+            {
+                Day = "Current",
+                StartTime = new TimeOnly(0, 0),
+                EndTime = new TimeOnly(0, 0)
+            };
+            await ScheduleRepoAsync.CreateAsync(dummy);
+            scheduled.Add(dummy);
+        }
+
+        UpdateShopStatus();
+
+        allCategories = await CategoryAsync.ReadAllAsync();
         categoryOptions = allCategories.Select(c => (c.CategoriesId, c.Name)).ToList();
     }
+
 
 
     private void ToggleCategoryForm()
@@ -486,5 +514,103 @@
             editingCategoryIds.Add(categoryId);
         }
     }
+    private async Task SaveSchedule()
+    {
+        foreach (var entry in scheduled)
+        {
+            await ScheduleRepoAsync.UpdateAsync(entry);
+        }
+    }
+    private bool IsOffline(TimeOnly? now, TimeOnly? start, TimeOnly? end)
+    {
+        if (start == end) return false; 
+
+        if (start < end)
+            return now >= start && now < end; 
+
+        return now >= start || now < end; 
+    }
+
+    
+    private void UpdateShopStatus()
+    {
+        var now = TimeOnly.FromDateTime(DateTime.Now);
+        var today = DateTime.Now.DayOfWeek.ToString();
+
+        var overrideEntry = scheduled.FirstOrDefault(s => s.Day == "Current");
+        var dayEntry = scheduled.FirstOrDefault(s => s.Day.Equals(today, StringComparison.OrdinalIgnoreCase));
+
+        if (overrideEntry != null && IsOffline(now, overrideEntry.StartTime, overrideEntry.EndTime))
+        {
+            isShopRunning = false;
+            shopStatus = "Offline (Override)";
+            return;
+        }
+
+        if (dayEntry != null && IsOffline(now, dayEntry.StartTime, dayEntry.EndTime))
+        {
+            isShopRunning = false;
+            shopStatus = "Offline";
+        }
+        else
+        {
+            isShopRunning = true;
+            shopStatus = "Online";
+        }
+    }
+
+
+
+
+
+
+
+    private string GetStatusBadgeClass()
+    {
+        return isShopRunning ? "bg-success text-white" : "bg-danger text-white";
+    }
+
+    private async Task StartShop()
+    {
+        var controlEntry = scheduled.FirstOrDefault(s => s.Day == "Current");
+        if (controlEntry == null) return;
+
+        controlEntry.StartTime = TimeOnly.FromDateTime(DateTime.Now);
+        controlEntry.EndTime = new TimeOnly(23, 59);
+
+        await ScheduleRepoAsync.UpdateAsync(controlEntry);
+
+        scheduled = await ScheduleRepoAsync.ReadAllAsync();
+        UpdateShopStatus();
+    }
+
+
+    private async Task StopShop()
+    {
+        var controlEntry = scheduled.FirstOrDefault(s => s.Day == "Current");
+        if (controlEntry == null) return;
+
+        controlEntry.StartTime = new TimeOnly(0, 0);
+        controlEntry.EndTime = new TimeOnly(0, 0); 
+
+        await ScheduleRepoAsync.UpdateAsync(controlEntry);
+
+        scheduled = await ScheduleRepoAsync.ReadAllAsync();
+        UpdateShopStatus();
+    }
+    private async Task ResetControlTimer()
+    {
+        var controlEntry = scheduled.FirstOrDefault(s => s.Day == "Current");
+        if (controlEntry == null) return;
+
+        controlEntry.StartTime = null;
+        controlEntry.EndTime = null;
+
+        await ScheduleRepoAsync.UpdateAsync(controlEntry);
+        scheduled = await ScheduleRepoAsync.ReadAllAsync();
+        UpdateShopStatus();
+    }
+
+
 
 }

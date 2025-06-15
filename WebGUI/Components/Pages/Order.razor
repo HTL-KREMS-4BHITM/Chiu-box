@@ -5,6 +5,7 @@
 @using WebGUI.Components.Components
 @inject ProtectedSessionStorage ProtectedSessionStore
 @inject EmailService EmailService
+@inject IRepositoryAsync<ShopSchedule> ScheduleRepoAsync
 @rendermode InteractiveServer
 
 <div class="container mainDishesView">
@@ -66,100 +67,117 @@
                 </table>
             </div>
         </div>
+        @if (!isShopOnline)
+        {
+            <div class="alert alert-warning text-center mt-4" role="alert">
+                🛑 @nextOnlineMessage
+            </div>
+        }
 
         <div class="d-flex justify-content-center">
             <h5 class="mt-4 mb-4">Schritt 3: Bestellart auswählen</h5>
         </div>
-
-        <div class="d-flex justify-content-center mb-3">
-            <div class="form-check mx-2">
-                <input class="form-check-input" type="radio" id="eatIn" value="E" @onchange="() => SetOrderType('E')" checked="@((orderType == 'E'))" />
-                <label class="form-check-label" for="eatIn">Im Restaurant essen</label>
-            </div>
-            <div class="form-check mx-2">
-                <input class="form-check-input" type="radio" id="delivery" value="D" @onchange="() => SetOrderType('D')" checked="@((orderType == 'D'))" />
-                <label class="form-check-label" for="delivery">Liefern lassen</label>
-            </div>
-        </div>
-
-        @if (!string.IsNullOrWhiteSpace(Status))
+        @if (isShopOnline)
         {
-            <div class="text-center mt-2">
-                <small class="@AlertClass">@Status</small>
-            </div>
-        }
-
-        <EditForm Model="@this" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="d-flex justify-content-center">
-                <div style="max-width: 500px; width: 100%;">
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <InputText class="form-control" @bind-Value="customerName" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <InputText class="form-control" @bind-Value="email" type="email" required />
-                    </div>
-
-                    @if (orderType == 'D')
-                    {
-                        <div class="mb-3">
-                            <label class="form-label">Straße</label>
-                            <InputText class="form-control" @bind-Value="street" required />
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">Hausnummer</label>
-                                <InputText class="form-control" @bind-Value="houseNumber" required />
-                            </div>
-                            <div class="col">
-                                <label class="form-label">Stiege (optional)</label>
-                                <InputText class="form-control" @bind-Value="staircase" />
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col">
-                                <label class="form-label">PLZ</label>
-                                <InputText class="form-control" @bind-Value="zipCode" required />
-                            </div>
-                            <div class="col">
-                                <label class="form-label">Ort</label>
-                                <InputText class="form-control" @bind-Value="city" required />
-                            </div>
-                        </div>
-                    }
-
-                    <div class="mb-3 mt-3">
-                        <label class="form-label">Telefonnummer</label>
-                        <InputText class="form-control"
-                                   type="tel"
-                                   @bind-Value="customerNumber"
-                                   pattern="^[0-9+\s\-]{6,20}$"
-                                   title="Bitte eine gültige Telefonnummer eingeben (z. B. +43 123 456789)"
-                                   required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Zeit (mindestens 30 Minuten ab jetzt)</label>
-                        <input type="time" class="form-control" @bind="selectedTime" required />
-                        @if (!isValidTime)
-                        {
-                            <small class="text-danger d-block mt-1">Bitte wählen Sie eine Zeit mindestens 30 Minuten ab jetzt.</small>
-                        }
-                    </div>
-
-                    <button type="submit" class="btn btn-primary mt-3 border-0" style="background-color: #457123">
-                        Bestellung abschicken
-                    </button>
+            <div class="d-flex justify-content-center mb-3">
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" id="eatIn" value="E"
+                           @onchange="() => SetOrderType('E')" checked="@((orderType == 'E'))"/>
+                    <label class="form-check-label" for="eatIn">Im Restaurant essen</label>
+                </div>
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" id="delivery" value="D"
+                           @onchange="() => SetOrderType('D')" checked="@((orderType == 'D'))"/>
+                    <label class="form-check-label" for="delivery">Liefern lassen</label>
                 </div>
             </div>
-        </EditForm>
+
+            @if (!string.IsNullOrWhiteSpace(Status))
+            {
+                <div class="text-center mt-2">
+                    <small class="@AlertClass">@Status</small>
+                </div>
+            }
+
+            <EditForm Model="@this" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator/>
+                <ValidationSummary/>
+
+                <div class="d-flex justify-content-center">
+                    <div style="max-width: 500px; width: 100%;">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="customerName" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <InputText class="form-control" @bind-Value="email" type="email" required/>
+                        </div>
+
+                        @if (orderType == 'D')
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Straße</label>
+                                <InputText class="form-control" @bind-Value="street" required/>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label">Hausnummer</label>
+                                    <InputText class="form-control" @bind-Value="houseNumber" required/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Stiege (optional)</label>
+                                    <InputText class="form-control" @bind-Value="staircase"/>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label class="form-label">PLZ</label>
+                                    <InputText class="form-control" @bind-Value="zipCode" required/>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Ort</label>
+                                    <InputText class="form-control" @bind-Value="city" required/>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="mb-3 mt-3">
+                            <label class="form-label">Telefonnummer</label>
+                            <InputText class="form-control"
+                                       type="tel"
+                                       @bind-Value="customerNumber"
+                                       pattern="^[0-9+\s\-]{6,20}$"
+                                       title="Bitte eine gültige Telefonnummer eingeben (z. B. +43 123 456789)"
+                                       required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Zeit (mindestens 30 Minuten ab jetzt)</label>
+                            <input type="time" class="form-control" @bind="selectedTime" required/>
+                            @if (!isValidTime)
+                            {
+                                <small class="text-danger d-block mt-1">Bitte wählen Sie eine Zeit mindestens 30 Minuten
+                                    ab jetzt.</small>
+                            }
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3 border-0" style="background-color: #457123">
+                            Bestellung abschicken
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        }
+        else
+        {
+            <div class="text-center mt-4">
+                <p class="text-muted">Der Onlineshop ist derzeit deaktiviert. Bestellungen sind aktuell nicht möglich.</p>
+            </div>
+        }
     }
 </div>
 
@@ -179,7 +197,44 @@
     private decimal total;
     private string Status;
     private string AlertClass = "text-success";
+    private bool isShopOnline = true;
+    private string nextOnlineMessage = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        var scheduled = await ScheduleRepoAsync.ReadAllAsync();
+        var now = TimeOnly.FromDateTime(DateTime.Now);
+        var today = DateTime.Now.DayOfWeek.ToString(); // e.g., "Sunday"
+
+        var control = scheduled.FirstOrDefault(s => s.Day == "Current");
+        var todayEntry = scheduled.FirstOrDefault(s => s.Day.Equals(today, StringComparison.OrdinalIgnoreCase));
+
+        bool IsOffline(TimeOnly now, TimeOnly? start, TimeOnly? end)
+        {
+            if (start == null || end == null || start == end)
+                return false;
+            if (start < end)
+                return now >= start && now < end;
+            return now >= start || now < end;
+        }
+
+        if (control != null && IsOffline(now, control.StartTime, control.EndTime))
+        {
+            isShopOnline = false;
+            nextOnlineMessage = $"Der Onlineshop ist derzeit offline (manuell).";
+        }
+        else if (todayEntry != null && IsOffline(now, todayEntry.StartTime, todayEntry.EndTime))
+        {
+            isShopOnline = false;
+            nextOnlineMessage = $"Der Onlineshop ist derzeit offline (geplant bis {todayEntry.EndTime?.ToString("HH\\:mm")}).";
+        }
+        else
+        {
+            isShopOnline = true;
+        }
+    }
+
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
