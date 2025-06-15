@@ -67,16 +67,17 @@
                 </table>
             </div>
         </div>
-        @if (!isShopOnline)
-        {
-            <div class="alert alert-warning text-center mt-4" role="alert">
-                🛑 @nextOnlineMessage
-            </div>
-        }
+        
 
         <div class="d-flex justify-content-center">
             <h5 class="mt-4 mb-4">Schritt 3: Bestellart auswählen</h5>
         </div>
+        @if (!isShopOnline)
+        {
+            <div class="alert alert-warning text-center mt-4" role="alert">
+                @nextOnlineMessage
+            </div>
+        }
         @if (isShopOnline)
         {
             <div class="d-flex justify-content-center mb-3">
@@ -221,7 +222,7 @@
         if (control != null && IsOffline(now, control.StartTime, control.EndTime))
         {
             isShopOnline = false;
-            nextOnlineMessage = $"Der Onlineshop ist derzeit offline (manuell).";
+            nextOnlineMessage = $"Der Onlineshop ist derzeit offline.";
         }
         else if (todayEntry != null && IsOffline(now, todayEntry.StartTime, todayEntry.EndTime))
         {

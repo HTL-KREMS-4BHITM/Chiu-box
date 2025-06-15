@@ -31,7 +31,7 @@ public class EmailService
 
         var mailMessage = new MailMessage
         {
-            From = new MailAddress("noreply@example.com"),
+            From = new MailAddress("noreply@chiu-box.com"),
             Subject = "Bestellbestätigung",
             Body = body,
             IsBodyHtml = false
