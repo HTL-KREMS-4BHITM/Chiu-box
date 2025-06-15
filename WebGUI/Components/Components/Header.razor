@@ -40,9 +40,8 @@
                             
                         </a>
                     </li>
-                    @_currentTotalPrice
-                    <br>
-                    @CartService.TotalPrice Das Cart
+                    @_currentTotalPrice 
+
                     @* <li class="nav-item"> *@
                     @*     <a class="nav-link" href=""> *@
                     @*         <i class="bi bi-person-circle"></i> *@
@@ -69,7 +68,7 @@
     protected async override Task OnInitializedAsync()
     {
         base.OnInitializedAsync();
-        UpdateCart();
+        CartService.OnCartUpdated += UpdateCartCount;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -79,24 +78,32 @@
 
 
             dishes = (await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes")).Value ?? null;
-            if (dishes != null)
+            if (dishes == null)
             {
-                foreach (Dish dish in dishes)
-                {
-                    _currentTotalPrice += dish.Price;
-                }
+                dishes = new List<Dish>();
             }
+            ReloadPrice();
 
-            UpdateCart();
+            
         }
     }
 
-    private void UpdateCart()
+    private void ReloadPrice()
+    { 
+        foreach (Dish dish in dishes)
+        {
+            _currentTotalPrice += dish.Price;
+        }
+
+        CartService.TotalPrice = _currentTotalPrice;
+        StateHasChanged();
+    }
+    private void UpdateCartCount()
     {
         _currentTotalPrice = CartService.TotalPrice;
         StateHasChanged();
     }
 
-    public void Dispose() => CartService.OnCartUpdated -= UpdateCart;
+    public void Dispose() => CartService.OnCartUpdated -= UpdateCartCount;
     
 }

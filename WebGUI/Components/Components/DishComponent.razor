@@ -63,9 +63,7 @@
         }
         Dishes.Add(Dish);
         await ProtectedSessionStore.SetAsync("Dishes", Dishes);
-        CartService.TotalPrice += Dish.Price;
         CartService.AddItem(Dish);
-        
     }
     
 

@@ -2,7 +2,7 @@
 
 public interface IShoppingCartService
 {
-    List<Dish> Dishes { get; }
+
     decimal TotalPrice { get; set; }
     event Action OnCartUpdated;
     void AddItem(Dish dish);
@@ -10,9 +10,8 @@ public interface IShoppingCartService
 
 public class ShoppingCartService : IShoppingCartService
 {
-    private List<Dish> _dishes = new List<Dish>();
     private decimal _totalPrice;
-    public List<Dish> Dishes => _dishes;
+
 
     public decimal TotalPrice
     {
@@ -23,18 +22,12 @@ public class ShoppingCartService : IShoppingCartService
 
     public void AddItem(Dish dish)
     {
-        Dishes.Add(dish);
-        UpdatePrice();
+        Console.WriteLine("Start Cart");
+        TotalPrice += dish.Price;
         NotifyStateChanged();
+        Console.WriteLine("End Cart");
     }
-
-    public void UpdatePrice()
-    {
-        foreach (var item in Dishes)
-        {
-            _totalPrice += item.Price;
-        }
-    }
+    
     
     private void NotifyStateChanged() => OnCartUpdated?.Invoke();
 }
