@@ -1,4 +1,8 @@
-﻿@inject CartState CartState
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Model.Entites
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject IShoppingCartService CartService
+@rendermode InteractiveServer
 @implements IDisposable
 
 <section class="section-header">
@@ -33,9 +37,11 @@
                     <li class="nav-item cart">
                         <a class="nav-link" href="/order">
                             <i class="bi bi-cart3"></i>
-                            @CartState.TotalPrice
+                            
                         </a>
                     </li>
+                    @_currentTotalPrice 
+
                     @* <li class="nav-item"> *@
                     @*     <a class="nav-link" href=""> *@
                     @*         <i class="bi bi-person-circle"></i> *@
@@ -54,20 +60,50 @@
     
 
 @code {
-        
-    protected override void OnInitialized()
+    
+    private decimal _currentTotalPrice;
+    List<Dish> dishes = new List<Dish>();
+
+
+    protected async override Task OnInitializedAsync()
     {
-        // Subscribe to changes SAFELY
-        CartState.OnChange += async () => 
-        {
-            await InvokeAsync(StateHasChanged);
-        };
+        base.OnInitializedAsync();
+        CartService.OnCartUpdated += UpdateCartCount;
     }
 
-    public void Dispose()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Unsubscribe to avoid memory leaks
-        CartState.OnChange -= StateHasChanged;
+        if (firstRender)
+        {
+
+
+            dishes = (await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes")).Value ?? null;
+            if (dishes == null)
+            {
+                dishes = new List<Dish>();
+            }
+            ReloadPrice();
+
+            
+        }
     }
+
+    private void ReloadPrice()
+    { 
+        foreach (Dish dish in dishes)
+        {
+            _currentTotalPrice += dish.Price;
+        }
+
+        CartService.TotalPrice = _currentTotalPrice;
+        StateHasChanged();
+    }
+    private void UpdateCartCount()
+    {
+        _currentTotalPrice = CartService.TotalPrice;
+        StateHasChanged();
+    }
+
+    public void Dispose() => CartService.OnCartUpdated -= UpdateCartCount;
     
 }

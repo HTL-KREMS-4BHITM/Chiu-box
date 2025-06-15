@@ -1,7 +1,10 @@
 ﻿@using Domain.Repositories.Interfaces
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Model.Entites
 @inject IRepositoryAsync<AllergenDishesJT> AllergensDishesJTRepositoryAsync
 @inject IRepositoryAsync<Allergens> AllergensRepositoryAsync
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject IShoppingCartService CartService
 @rendermode InteractiveServer
 <div class="card dish d-flex @((Dish.IsOutOfStock ? "opacity-75" : "")) ">
     <div class="row flex-grow-1">
@@ -25,7 +28,7 @@
         <div class="col-3">
             <div class="row h-100">
                 <div class="col-12 d-flex justify-content-end pt-1 pe-3">
-                    <button class="addBtn btn" @onclick="OnAddToCart" disabled="@Dish.IsOutOfStock">+</button>
+                    <button class="addBtn btn" @onclick="AddToCart" disabled="@Dish.IsOutOfStock">+</button>
                 </div>
                 <div class="col-12 d-flex justify-content-end pe-4 mt-auto">
                     <div class="Allergene" 
@@ -60,7 +63,8 @@
 </div>
 
 @code {
-    [Parameter] public Dish Dish { get; set; }
+    [Parameter] public Dish Dish { get; set; } 
+    [Parameter] public AllergenDishesJT AllergenDishesJt { get; set; }
     [Parameter] public EventCallback OnAddToCart { get; set; }
     
     private bool showTooltip = false;
@@ -137,4 +141,19 @@
         hoverDelayCts?.Cancel();
         hoverDelayCts?.Dispose();
     }
+
+    private async Task AddToCart()
+    {
+        List<Dish> Dishes = new List<Dish>();
+        var result = await ProtectedSessionStore.GetAsync<List<Dish>>("Dishes");
+        if (result.Success)
+        {
+            Dishes = result.Value;
+        }
+        Dishes.Add(Dish);
+        await ProtectedSessionStore.SetAsync("Dishes", Dishes);
+        CartService.AddItem(Dish);
+    }
+    
+
 }

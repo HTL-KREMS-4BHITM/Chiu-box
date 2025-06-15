@@ -15,7 +15,7 @@
     
     <div class="d-flex justify-content-center my-5">
         <h4>Desserts</h4>
-        <ShoppingCart @ref="cartRef"/>
+
     </div>
     @if (Categories.Count() != 1)
     {
@@ -45,7 +45,7 @@
     private List<Category> Categories { get; set; } = new();
     private string UserName;
     private List<User> CurrentUser = new(); 
-    private ShoppingCart? cartRef;
+
     
     protected override async Task OnInitializedAsync()
     {
@@ -60,14 +60,7 @@
     }
 
     
-    private async Task AddToCart(Dish dish)
-    {
-        if (cartRef != null)
-        {
-            await cartRef.AddItem(dish);
-        }
-        StateHasChanged(); 
-    }
+
     
     
     #region Filter
