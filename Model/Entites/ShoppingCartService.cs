@@ -1,16 +1,18 @@
-﻿public interface IShoppingCartService
+﻿using Model.Entites;
+
+public interface IShoppingCartService
 {
-    int ItemCount { get; }
+    List<Dish> Dishes { get; }
     decimal TotalPrice { get; set; }
     event Action OnCartUpdated;
-    void AddItem();
+    void AddItem(Dish dish);
 }
 
 public class ShoppingCartService : IShoppingCartService
 {
-    private int _itemCount;
+    private List<Dish> _dishes = new List<Dish>();
     private decimal _totalPrice;
-    public int ItemCount => _itemCount;
+    public List<Dish> Dishes => _dishes;
 
     public decimal TotalPrice
     {
@@ -19,11 +21,20 @@ public class ShoppingCartService : IShoppingCartService
     }
     public event Action OnCartUpdated;
 
-    public void AddItem()
+    public void AddItem(Dish dish)
     {
-        _itemCount++;
+        Dishes.Add(dish);
+        UpdatePrice();
         NotifyStateChanged();
     }
 
+    public void UpdatePrice()
+    {
+        foreach (var item in Dishes)
+        {
+            _totalPrice += item.Price;
+        }
+    }
+    
     private void NotifyStateChanged() => OnCartUpdated?.Invoke();
 }

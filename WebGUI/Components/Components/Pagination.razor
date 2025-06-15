@@ -1,0 +1,87 @@
+﻿@using Model.Entites
+<nav aria-label="Page navigation example" class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item @( _currentPage == 1 ? "disabled" : "" )">
+            <button class="page-link" @onclick="PreviousPage">Prev</button>
+        </li>
+
+        @for (int i = 1; i <= _totalPages; i++)
+        {
+            int pageNumber = i; 
+            <li class="page-item @( _currentPage == pageNumber ? "active" : "" )">
+                <button class="page-link" @onclick="() => GoToPage(pageNumber)">@pageNumber</button>
+            </li>
+        }
+
+
+        <li class="page-item @( _currentPage == _totalPages ? "disabled" : "" )">
+            <button class="page-link" @onclick="NextPage">Next</button>
+        </li>
+    </ul>
+</nav>
+
+@code
+{
+
+    /*protected override void OnParametersSet()
+    {
+        if (Dishes != null)
+        {
+            UpdateTotalPages();
+        }
+    }*/
+
+
+    #region Pagination 
+    [Parameter] public List<Dish>? Dishes { get; set; }
+    private int _currentPage = 1;
+    private int _pageSize = 20;
+    [Parameter] public int _totalPages { get; set; }
+
+    
+    public List<Dish> GetPagedBikes()
+    {
+        return Dishes.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
+    }
+
+    private void UpdateTotalPages()
+    {
+        _totalPages = (int)Math.Ceiling((double)Dishes.Count / _pageSize);
+    }
+    
+    private void NextPage()
+    {
+        if (_currentPage < _totalPages)
+        {
+            _currentPage++;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void GoToPage(int pageNumber)
+    {
+        if (pageNumber >= 1 && pageNumber <= _totalPages)
+        {
+            _currentPage = pageNumber;
+            InvokeAsync(() =>
+            {
+               
+                StateHasChanged();
+            });
+        }
+    }
+
+
+    
+    
+    #endregion
+}
